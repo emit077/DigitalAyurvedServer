@@ -1,0 +1,8 @@
+import keys
+""" user account type """
+ACCOUNT_TYPE_CHOICES = [
+    (keys.ACCOUNT_DOCTOR, keys.ACCOUNT_DOCTOR),
+    (keys.ACCOUNT_DISTRIBUTOR, keys.ACCOUNT_DISTRIBUTOR),
+    (keys.ACCOUNT_PATIENTS, keys.ACCOUNT_PATIENTS),
+    (keys.ACCOUNT_SUPER_ADMIN, keys.ACCOUNT_SUPER_ADMIN),
+]
