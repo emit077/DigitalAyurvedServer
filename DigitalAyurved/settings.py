@@ -10,10 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import environ
+from corsheaders.defaults import default_headers
+
+env = environ.Env(
+    DEBUG=(bool, False),
+    IS_PRODUCTION=(bool, False),
+    DJANGO_LOG_LEVEL=(str, 'INFO'),
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -24,9 +35,7 @@ SECRET_KEY = 'django-insecure-c&4#4l+ywap%$f#(l)$kr1)uc)c!gi0r8zjhvzcf$adaqk==38
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-# Application definition
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,7 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # third party apps
+    'corsheaders',
+    'django_extensions',
     'rest_framework',
+    'rest_framework.authtoken',
     # user defined apps
     'doctor.apps.DoctorConfig',
     'drugs.apps.DrugsConfig',
@@ -45,6 +57,8 @@ INSTALLED_APPS = [
     'patient.apps.PatientConfig',
     'users.apps.UsersConfig',
 ]
+# Application definition
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'DigitalAyurved.urls'
@@ -109,7 +124,8 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.AllowAny'
     ]
 }
 
@@ -118,7 +134,7 @@ REST_FRAMEWORK = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
@@ -135,3 +151,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW = "*"
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'token',
+    'otp-token',
+    'application-type',
+    'Access-Control-Allow-Origin',
+]
+CORS_EXPOSE_HEADERS = list(default_headers) + [
+    'token',
+    'otp-token',
+    'application-type',
+    'Access-Control-Allow-Origin',
+]
