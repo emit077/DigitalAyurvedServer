@@ -148,6 +148,49 @@ def patient_details(request):
     return Response(response, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@CustomDjangoDecorators.validate_access_token
+def get_treatment_history(request):
+    treatment_table_id = request.GET.get(keys.TREATMENT_TABLE_ID, None)
+    page_number = request.GET.get(keys.PAGE_NUMBER, 1)
+    page_length = request.GET.get(keys.PAGE_LENGTH, 20)
+    search_query = request.GET.get(keys.SEARCH_QUERY, None)
+    from_date = request.GET.get(keys.FROM_DATE, None)
+    to_date = request.GET.get(keys.TO_DATE, None)
+
+    queryset = TreatmentRecord.objects.all().order_by('-id')
+    if treatment_table_id:
+        queryset = queryset.filter(id=treatment_table_id)
+
+    if from_date and to_date:
+        queryset = queryset.filter(created__date__gte=from_date, created__date__lte=to_date)
+    if search_query:
+        queryset = queryset.filter(
+            Q(doctor__user__name__istartswith=search_query) |
+            Q(patient__user__name__istartswith=search_query) |
+            Q(patient__user__mobile__icontains=search_query) |
+            Q(doctor__user__mobile__icontains=search_query) |
+            Q(patient__user__email__icontains=search_query))
+
+    paginator = Paginator(queryset, page_length)
+    try:
+        queryset = paginator.page(page_number)
+    except PageNotAnInteger:
+        queryset = paginator.page(1)
+    except EmptyPage:
+        queryset = paginator.page(paginator.num_pages)
+
+    treatment_history = TreatmentRecordSerializer(queryset, many=True).data
+
+    response = {
+        keys.SUCCESS: True,
+        keys.MESSAGE: messages.SUCCESS,
+        keys.TOTAL_PAGE_COUNT: paginator.num_pages,
+        keys.TREATMENT_HISTORY: treatment_history,
+    }
+    return Response(response, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 @CustomDjangoDecorators.validate_access_token
 def add_prescription(request):

@@ -50,14 +50,18 @@ class PrescriptionRecordSerializer(serializers.ModelSerializer):
 
 class TreatmentRecordSerializer(serializers.ModelSerializer):
     doctor_name = serializers.CharField(source="doctor.user.name")
+    doctor_mobile = serializers.CharField(source="doctor.user.mobile")
     patient_name = serializers.CharField(source="doctor.user.name")
+    patient_mobile = serializers.CharField(source="doctor.user.mobile")
     created = serializers.DateTimeField(format=keys.DATE_TIME_FORMAT)
 
     class Meta:
         model = TreatmentRecord
         fields = ['id',
                   'doctor_name',
+                  'doctor_mobile',
                   'patient_name',
+                  'patient_mobile',
                   'chief_complaint',
                   'history_of_chief_complaint',
                   'required_test',

@@ -9,6 +9,8 @@ PAGE_NUMBER = "page_number"
 PAGE_LENGTH = "page_length"
 TOTAL_PAGE_COUNT = "total_page_count"
 SEARCH_QUERY = "search_query"
+FROM_DATE = "from_date"
+TO_DATE = "to_date"
 
 OTP = "otp"
 OTP_TOKEN = "otp-token"
