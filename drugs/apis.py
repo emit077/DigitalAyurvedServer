@@ -22,7 +22,7 @@ def add_drugs(request):
     formula = request.data.get(keys.FORMULA, None)
     brand = request.data.get(keys.BRAND, None)
     drug_unit = request.data.get(keys.DRUG_UNIT, None)
-    anupana = request.data.get(keys.ANUPANA, None)
+    anupaan = request.data.get(keys.ANUPAAN, None)
     formulation = request.data.get(keys.FORMULATION, None)
 
     if drug_table_id:
@@ -41,8 +41,31 @@ def add_drugs(request):
     drug_instance.formula = formula
     drug_instance.brand = brand
     drug_instance.drug_unit = drug_unit
-    drug_instance.anupana = anupana
+    drug_instance.anupaan = anupaan
     drug_instance.formulation = formulation
+    drug_instance.save()
+
+    response = {
+        keys.SUCCESS: True,
+        keys.MESSAGE: messages.SUCCESS,
+        keys.DRUG_TABLE_ID: drug_instance.id,
+    }
+    return Response(response, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@CustomDjangoDecorators.validate_access_token
+def delete_drug(request):
+    drug_table_id = request.data.get(keys.DRUG_TABLE_ID, None)
+    if drug_table_id:
+        try:
+            drug_instance = DrugData.objects.get(id=drug_table_id)
+            drug_instance.delete()
+        except DrugData.DoesNotExist:
+            return Response({
+                keys.SUCCESS: False,
+                keys.MESSAGE: messages.RECORD_NOT_FOUND
+            }, status=status.HTTP_400_BAD_REQUEST)
 
     response = {
         keys.SUCCESS: True,
@@ -107,7 +130,7 @@ def drug_details(request):
         keys.FORMULA: drug_instance.formula,
         keys.BRAND: drug_instance.brand,
         keys.DRUG_UNIT: drug_instance.drug_unit,
-        keys.ANUPANA: drug_instance.anupana,
+        keys.ANUPAAN: drug_instance.anupaan,
         keys.FORMULATION: drug_instance.formulation,
     }
     return Response(response, status=status.HTTP_200_OK)

@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import PatientsData, PrescriptionRecord
+import keys
+from .models import PatientsData, PrescriptionRecord, TreatmentRecord
 
 User = get_user_model()
 
@@ -34,6 +35,7 @@ class PatientsDataSerializer(serializers.ModelSerializer):
 
 class PrescriptionRecordSerializer(serializers.ModelSerializer):
     drug_name = serializers.CharField(source="drug.drug_name")
+
     class Meta:
         model = PrescriptionRecord
         fields = ['id',
@@ -43,4 +45,22 @@ class PrescriptionRecordSerializer(serializers.ModelSerializer):
                   'frequency',
                   'qty',
                   'instruction',
+                  ]
+
+
+class TreatmentRecordSerializer(serializers.ModelSerializer):
+    doctor_name = serializers.CharField(source="doctor.user.name")
+    patient_name = serializers.CharField(source="doctor.user.name")
+    created = serializers.DateTimeField(format=keys.DATE_TIME_FORMAT)
+
+    class Meta:
+        model = TreatmentRecord
+        fields = ['id',
+                  'doctor_name',
+                  'patient_name',
+                  'chief_complaint',
+                  'history_of_chief_complaint',
+                  'required_test',
+                  'advise',
+                  'created'
                   ]

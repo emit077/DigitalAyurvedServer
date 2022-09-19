@@ -9,12 +9,12 @@ Users = get_user_model()
 
 
 class DrugData(models.Model):
-    drug_name = models.CharField(max_length=255, null=True)
-    formula = models.CharField(max_length=255, null=True)
-    brand = models.CharField(max_length=100, )
-    drug_unit = models.CharField(max_length=255, choices=choices.DRUG_UNIT)
-    anupana = models.CharField(max_length=150)
-    formulation = models.CharField(max_length=150)
+    drug_name = models.CharField(max_length=255)
+    formula = models.CharField(max_length=255, null=True, blank=True)
+    brand = models.CharField(max_length=100, null=True, blank=True)
+    drug_unit = models.CharField(max_length=255, choices=choices.DRUG_UNIT,null=True, blank=True)
+    anupaan = models.CharField(max_length=150,null=True, blank=True)
+    formulation = models.CharField(max_length=150,null=True, blank=True)
     mrp = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
     # auto
     created = models.DateTimeField(auto_now_add=True)

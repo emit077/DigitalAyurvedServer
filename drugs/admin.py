@@ -11,7 +11,7 @@ class DrugDataAdmin(admin.ModelAdmin):
         'formula',
         'brand',
         'drug_unit',
-        'anupana',
+        'anupaan',
         'formulation',
         'mrp',
         'created',

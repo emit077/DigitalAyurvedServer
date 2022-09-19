@@ -10,5 +10,6 @@ urlpatterns = [
     re_path('^details/$', apis.patient_details),
     re_path('^add/prescription/$', apis.add_prescription),
     re_path('^get/treatment-details/$', apis.get_prescription_details),
+    re_path('^delete/treatment-record/$', apis.delete_treatment_record),
     re_path('^get/prescription-supporting-data/$', apis.get_prescription_supporting_data),
 ]

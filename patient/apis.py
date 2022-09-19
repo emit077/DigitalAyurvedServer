@@ -14,7 +14,7 @@ from drugs.models import DrugData
 from helper.views import CustomDjangoDecorators, HelperAuthentication
 from master.models import MaterDoseData, MaterFrequencyData, MaterInstructionData
 from .models import PatientsData, TreatmentRecord, PrescriptionRecord
-from .serializers import PatientsDataSerializer, PrescriptionRecordSerializer
+from .serializers import PatientsDataSerializer, PrescriptionRecordSerializer, TreatmentRecordSerializer
 
 Users = get_user_model()
 
@@ -36,15 +36,18 @@ def add_patient(request):
     if patient_table_id:
         try:
             patients_instance = PatientsData.objects.get(id=patient_table_id)
+            user_instance = patients_instance.user
+            if mobile:
+                user_instance.mobile = mobile
+            user_instance.email = email
+            user_instance.save()
         except PatientsData.DoesNotExist:
             return Response({
                 keys.SUCCESS: False,
                 keys.MESSAGE: messages.RECORD_NOT_FOUND
             }, status=status.HTTP_400_BAD_REQUEST)
-
     else:
         patients_instance = PatientsData()
-
         if mobile:
             if Users.objects.filter(mobile=mobile).exists():
                 return Response({
@@ -53,19 +56,21 @@ def add_patient(request):
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             user_instance = Users.objects.create(
+                name="%s %s" % (patient_first_name, patient_last_name),
                 mobile=mobile,
                 email=email,
                 account_type=keys.ACCOUNT_DOCTOR
             )
             patients_instance.user = user_instance
 
-        patients_instance.patient_first_name = patient_first_name
-        patients_instance.patient_last_name = patient_last_name
-        patients_instance.occupation = occupation
-        patients_instance.age = age
-        patients_instance.gender = gender
-        patients_instance.address = address
-        patients_instance.city = city
+    patients_instance.patient_first_name = patient_first_name
+    patients_instance.patient_last_name = patient_last_name
+    patients_instance.occupation = occupation
+    patients_instance.age = age
+    patients_instance.gender = gender
+    patients_instance.address = address
+    patients_instance.city = city
+    patients_instance.save()
 
     response = {
         keys.SUCCESS: True,
@@ -121,6 +126,10 @@ def patient_details(request):
             keys.MESSAGE: messages.RECORD_NOT_FOUND
         }, status=status.HTTP_400_BAD_REQUEST)
 
+    treatment_history = TreatmentRecordSerializer(
+        TreatmentRecord.objects.filter(patient=patients_instance).order_by('-id'),
+        many=True).data
+
     response = {
         keys.SUCCESS: True,
         keys.MESSAGE: messages.SUCCESS,
@@ -134,6 +143,7 @@ def patient_details(request):
         keys.PATIENT_LAST_NAME: patients_instance.patient_last_name,
         keys.ADDRESS: patients_instance.address,
         keys.CITY: patients_instance.city,
+        keys.TREATMENT_HISTORY: treatment_history,
     }
     return Response(response, status=status.HTTP_200_OK)
 
@@ -232,6 +242,27 @@ def add_prescription(request):
         keys.SUCCESS: True,
         keys.MESSAGE: messages.SUCCESS,
         keys.TREATMENT_TABLE_ID: treatment_instance.id,
+    }
+    return Response(response, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@CustomDjangoDecorators.validate_access_token
+def delete_treatment_record(request):
+    treatment_table_id = request.data.get(keys.TREATMENT_TABLE_ID, None)
+    if treatment_table_id:
+        try:
+            treatment_instance = TreatmentRecord.objects.get(id=treatment_table_id)
+            treatment_instance.delete()
+        except PatientsData.DoesNotExist:
+            return Response({
+                keys.SUCCESS: False,
+                keys.MESSAGE: messages.RECORD_NOT_FOUND
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    response = {
+        keys.SUCCESS: True,
+        keys.MESSAGE: messages.SUCCESS,
     }
     return Response(response, status=status.HTTP_200_OK)
 

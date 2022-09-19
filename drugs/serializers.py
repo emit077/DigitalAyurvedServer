@@ -11,12 +11,14 @@ class DrugDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DrugData
-        fields = ['drug_table_id',
-                  "drug_name",
-                  "formula",
-                  "brand",
-                  "mrp",
-                  "drug_unit",
-                  "anupana",
-                  "formulation",
-                  ]
+        fields = [
+            'id',
+            'drug_table_id',
+            "drug_name",
+            "formula",
+            "brand",
+            "mrp",
+            "drug_unit",
+            "anupaan",
+            "formulation",
+        ]
