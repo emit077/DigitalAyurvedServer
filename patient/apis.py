@@ -208,6 +208,8 @@ def add_prescription(request):
     advise = request.data.get(keys.ADVISE, None)
     required_test = request.data.get(keys.REQUIRED_TEST, None)
     prescription_list = request.data.get(keys.PRESCRIPTION_LIST, None)
+    weight = request.data.get(keys.WEIGHT, None)
+    diet_exercise = request.data.get(keys.DIET_EXERCISE, None)
 
     user = HelperAuthentication.get_users_instance(request)
 
@@ -258,7 +260,8 @@ def add_prescription(request):
     treatment_instance.oe = oe
     treatment_instance.required_test = required_test
     treatment_instance.advise = advise
-    treatment_instance.required_test = required_test
+    treatment_instance.weight = weight
+    treatment_instance.diet_exercise = diet_exercise
     treatment_instance.save()
 
     if prescription_list and isinstance(prescription_list, str):
@@ -349,6 +352,8 @@ def get_prescription_details(request):
         keys.PLUS_RATE: treatment_instance.plus_rate,
         keys.TEMPERATURE: treatment_instance.temperature,
         keys.SPO2: treatment_instance.spo2,
+        keys.DIET_EXERCISE: treatment_instance.diet_exercise,
+        keys.WEIGHT: treatment_instance.weight,
         # treatment and complaint
         keys.CHIEF_COMPLAINT: treatment_instance.chief_complaint,
         keys.HISTORY_OF_CHIEF_COMPLAINT: treatment_instance.history_of_chief_complaint,

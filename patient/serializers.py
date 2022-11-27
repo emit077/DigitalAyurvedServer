@@ -65,6 +65,8 @@ class TreatmentRecordSerializer(serializers.ModelSerializer):
                   'chief_complaint',
                   'history_of_chief_complaint',
                   'required_test',
+                  'diet_exercise',
+                  'weight',
                   'advise',
                   'created'
                   ]

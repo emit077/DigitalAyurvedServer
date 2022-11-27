@@ -37,8 +37,10 @@ class TreatmentRecord(models.Model):
     blood_sugar = models.PositiveIntegerField(default=0)
     plus_rate = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
     spo2 = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
+    weight = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
     temperature = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
     oe = models.TextField(null=True, blank=True, help_text="on examination")
+    diet_exercise = models.TextField(null=True, blank=True, help_text="on examination")
     required_test = models.TextField(null=True, blank=True)
     advise = models.TextField(null=True, blank=True)
     # auto

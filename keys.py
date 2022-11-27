@@ -74,6 +74,8 @@ PRESCRIPTION_LIST = "prescription_list"
 PRESCRIPTION_TABLE_ID = "prescription_table_id"
 TREATMENT_TABLE_ID = "treatment_table_id"
 TREATMENT_DATE = "treatment_date"
+WEIGHT = "weight"
+DIET_EXERCISE = "diet_exercise"
 
 DOCTOR_LIST = "doctor_list"
 DRUG_LIST = "drug_list"
