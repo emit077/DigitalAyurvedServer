@@ -1,0 +1,8 @@
+db.sqlite3
+DigitalAyurved/__pycache__/
+*.pyc
+.idea/
+media/
+static/
+.env
+/venv
