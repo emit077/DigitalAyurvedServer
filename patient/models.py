@@ -33,7 +33,7 @@ class TreatmentRecord(models.Model):
     doctor = models.ForeignKey(to=DoctorsData, on_delete=models.CASCADE, related_name='doctor_record', )
     chief_complaint = models.TextField()
     history_of_chief_complaint = models.TextField()
-    blood_pressure = models.CharField(max_length=10, null=True, blank=True)
+    blood_pressure = models.CharField(max_length=50, null=True, blank=True)
     blood_sugar = models.PositiveIntegerField(default=0)
     plus_rate = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
     spo2 = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
@@ -52,9 +52,9 @@ class PrescriptionRecord(models.Model):
     treatment_record = models.ForeignKey(to=TreatmentRecord, on_delete=models.CASCADE,
                                          related_name='treatment_prescription', )
     drug = models.ForeignKey(to=DrugData, on_delete=models.CASCADE, related_name='prescription_drug')
-    dose = models.CharField(max_length=100, null=True, blank=True)
-    frequency = models.CharField(max_length=100, null=True, blank=True)
-    qty = models.CharField(max_length=100, null=True, blank=True)
+    dose = models.CharField(max_length=400, null=True, blank=True)
+    frequency = models.CharField(max_length=400, null=True, blank=True)
+    qty = models.CharField(max_length=400, null=True, blank=True)
     instruction = models.TextField(null=True, blank=True)
     # auto
     created = models.DateTimeField(auto_now_add=True)
