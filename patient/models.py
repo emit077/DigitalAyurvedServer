@@ -52,9 +52,9 @@ class PrescriptionRecord(models.Model):
     treatment_record = models.ForeignKey(to=TreatmentRecord, on_delete=models.CASCADE,
                                          related_name='treatment_prescription', )
     drug = models.ForeignKey(to=DrugData, on_delete=models.CASCADE, related_name='prescription_drug')
-    dose = models.CharField(max_length=10, null=True, blank=True)
-    frequency = models.CharField(max_length=10, null=True, blank=True)
-    qty = models.CharField(max_length=10, null=True, blank=True)
+    dose = models.CharField(max_length=100, null=True, blank=True)
+    frequency = models.CharField(max_length=100, null=True, blank=True)
+    qty = models.CharField(max_length=100, null=True, blank=True)
     instruction = models.TextField(null=True, blank=True)
     # auto
     created = models.DateTimeField(auto_now_add=True)
