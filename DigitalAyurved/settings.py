@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'DigitalAyurved.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
-if env('IS_PRODUCTION'):
+if env('IS_PRODUCTION')==True:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
