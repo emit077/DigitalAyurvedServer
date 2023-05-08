@@ -56,10 +56,11 @@ def blog_details(request):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     # blog_data = BlogDataSerializer(blog_instance, many=False).data
-
+    suggestions = BlogData.objects.all().order_by('-id').exclude(id=blog_table_id)
     response = {
         keys.SUCCESS: True,
         keys.MESSAGE: messages.SUCCESS,
         keys.BLOG_DATA: blog_instance.blog_data,
+        keys.SUGGESTIONS: BlogDataSerializer(suggestions[:3], many=True).data,
     }
     return Response(response, status=status.HTTP_200_OK)

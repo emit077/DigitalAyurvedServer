@@ -94,6 +94,8 @@ DRUG_TABLE_ID = "drug_table_id"
 TREATMENT_TABLE_ID = "treatment_table_id"
 BLOG_TABLE_ID = "blog_table_id"
 
+SUGGESTIONS = "suggestions"
+
 # date format
 DJANGO_DATE_FORMAT = '%Y-%m-%d'
 DATE_FORMAT_DDMMYYYY = '%d/%m/%Y'
