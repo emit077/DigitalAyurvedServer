@@ -79,6 +79,8 @@ DIET_EXERCISE = "diet_exercise"
 
 DOCTOR_LIST = "doctor_list"
 DRUG_LIST = "drug_list"
+BLOG_LIST = "blog_list"
+BLOG_DATA = "blog_data"
 PATIENT_LIST = "patient_list"
 
 DOSE_LIST = "dose_list"
@@ -90,6 +92,7 @@ DOCTOR_TABLE_ID = "doctor_table_id"
 PATIENT_TABLE_ID = "patient_table_id"
 DRUG_TABLE_ID = "drug_table_id"
 TREATMENT_TABLE_ID = "treatment_table_id"
+BLOG_TABLE_ID = "blog_table_id"
 
 # date format
 DJANGO_DATE_FORMAT = '%Y-%m-%d'
