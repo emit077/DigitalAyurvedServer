@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
@@ -8,7 +10,8 @@ from rest_framework.response import Response
 import keys
 import messages
 from helper.views import CustomDjangoDecorators
-from .models import DrugData
+from master.models import MasterVendorData
+from .models import DrugData, PurchaseOrderData, PurchaseItemData
 from .serializers import DrugDataSerializer
 
 Users = get_user_model()
@@ -132,5 +135,94 @@ def drug_details(request):
         keys.DRUG_UNIT: drug_instance.drug_unit,
         keys.ANUPAAN: drug_instance.anupaan,
         keys.FORMULATION: drug_instance.formulation,
+    }
+    return Response(response, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@CustomDjangoDecorators.validate_access_token
+def purchase_order(request):
+    vendor_table_id = request.data.get(keys.VENDOR_TABLE_ID, None)
+    purchase_order_table_id = request.data.get(keys.PURCHASE_ORDER_TABLE_ID, None)
+    invoice_id = request.data.get(keys.INVOICE_ID, None)
+    invoice_date = request.data.get(keys.INVOICE_DATE, None)
+    comment = request.data.get(keys.COMMENT, None)
+    item_list = request.data.get(keys.ITEM_LIST, None)
+
+    try:
+        vendor = MasterVendorData.objects.get(id=vendor_table_id)
+    except MasterVendorData.DoesNotExist:
+        return Response({
+            keys.SUCCESS: False,
+            keys.MESSAGE: messages.NOT_FOUND_DYNAMIC.format(msg="Vendor")
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    if purchase_order_table_id:
+        try:
+            purchase_order_instance = PurchaseOrderData.objects.get(id=purchase_order_table_id)
+            # delete all the item before editing the record
+            PurchaseItemData.objects.filter(purchase_order=purchase_order_instance).delete()
+        except PurchaseOrderData.DoesNotExist:
+            return Response({
+                keys.SUCCESS: False,
+                keys.MESSAGE: messages.RECORD_NOT_FOUND
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        purchase_order_instance = DrugData()
+
+    purchase_order_instance.vendor = vendor
+    purchase_order_instance.invoice_id = invoice_id
+    purchase_order_instance.invoice_date = invoice_date
+    purchase_order_instance.comment = comment
+    purchase_order_instance.save()
+
+    if item_list and isinstance(item_list, str):
+        item_list = json.loads(item_list)
+        if item_list:
+            for item in item_list:
+                try:
+                    drug_instance = DrugData.objects.get(id=item['drug'])
+                    PurchaseItemData.objects.create(
+                        purchase_order=purchase_order_instance,
+                        drug=drug_instance,
+                        qty=item['qty'],
+                        purchase_price=item['purchase_price'],
+                        mrp=item['mrp'],
+                        expiry_date=item['expiry_date'],
+                    )
+                except DrugData.DoesNotExist:
+                    return Response({
+                        keys.SUCCESS: False,
+                        keys.MESSAGE: messages.NOT_FOUND_DYNAMIC.format(msg="Drug")
+                    }, status=status.HTTP_400_BAD_REQUEST)
+
+    response = {
+        keys.SUCCESS: True,
+        keys.MESSAGE: messages.SUCCESS,
+        keys.PURCHASE_ORDER_TABLE_ID: purchase_order_instance.id,
+    }
+    return Response(response, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@CustomDjangoDecorators.validate_access_token
+def delete_purchase_order(request):
+    purchase_order_table_id = request.data.get(keys.PURCHASE_ORDER_TABLE_ID, None)
+
+    try:
+        purchase_order_instance = PurchaseOrderData.objects.get(id=purchase_order_table_id)
+        # delete all the item before editing the record
+        PurchaseItemData.objects.filter(purchase_order=purchase_order_instance).delete()
+        purchase_order_instance.delete()
+    except PurchaseOrderData.DoesNotExist:
+        return Response({
+            keys.SUCCESS: False,
+            keys.MESSAGE: messages.NOT_FOUND_DYNAMIC.format(msg="Purchase Order")
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    response = {
+        keys.SUCCESS: True,
+        keys.MESSAGE: messages.SUCCESS,
     }
     return Response(response, status=status.HTTP_200_OK)

@@ -16,7 +16,7 @@ GENDER_CHOICE = [
     (keys.GENDER_OTHER, keys.GENDER_OTHER),
 ]
 
-"""gender option"""
+"""DRUG_UNIT"""
 DRUG_UNIT = [
     (keys.QTY, keys.QTY),
     (keys.DROP, keys.DROP),
@@ -24,4 +24,15 @@ DRUG_UNIT = [
     (keys.GRAM, keys.GRAM),
     (keys.MG, keys.MG),
     (keys.CUP, keys.CUP),
+]
+
+"""DRUG_TYPE"""
+DRUG_TYPE = [
+    (keys.QTY, keys.QTY),
+    (keys.DROP, keys.DROP),
+]
+
+ITEM_CATEGORY = [
+    (keys.DRUG, keys.DRUG),
+    (keys.INSTRUMENT, keys.INSTRUMENT),
 ]

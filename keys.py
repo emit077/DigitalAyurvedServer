@@ -30,6 +30,11 @@ MG = "mg"
 GRAM = "gram"
 CUP = "cup"
 
+# ITEM_CATEGORY
+
+DRUG = "Drug"
+INSTRUMENT = "Instrument"
+
 MOBILE = 'mobile'
 PASSWORD = 'password'
 MESSAGE = 'message'
@@ -93,6 +98,13 @@ PATIENT_TABLE_ID = "patient_table_id"
 DRUG_TABLE_ID = "drug_table_id"
 TREATMENT_TABLE_ID = "treatment_table_id"
 BLOG_TABLE_ID = "blog_table_id"
+VENDOR_TABLE_ID = "vendor_table_id"
+PURCHASE_ORDER_TABLE_ID = "purchase_order_table_id"
+
+INVOICE_ID = "invoice_id"
+INVOICE_DATE = "invoice_date"
+COMMENT = "comment"
+ITEM_LIST = "item_list"
 
 SUGGESTIONS = "suggestions"
 
