@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/drugs/', include(('drugs.urls', 'drugs'), namespace='drugs')),
     path('api/patient/', include(('patient.urls', 'patient'), namespace='patient')),
     path('api/blog/', include(('blog.urls', 'blog'), namespace='blog')),
+    path('api/website/', include(('website.urls', 'website'), namespace='website')),
 ]

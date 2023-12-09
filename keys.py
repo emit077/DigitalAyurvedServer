@@ -82,6 +82,7 @@ DRUG_LIST = "drug_list"
 BLOG_LIST = "blog_list"
 BLOG_DATA = "blog_data"
 PATIENT_LIST = "patient_list"
+ENQUIRY_LIST = "enquiry_list"
 
 DOSE_LIST = "dose_list"
 FREQUENCY_LIST = "frequency_list"
