@@ -59,7 +59,6 @@ class TreatmentRecordAdmin(admin.ModelAdmin):
 class PrescriptionRecordAdmin(admin.ModelAdmin):
     list_display = (
         'id',
-        'treatment_record',
         'drug',
         'dose',
         'frequency',

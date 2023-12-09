@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DrugData
+from .models import DrugData, PurchaseOrderData, PurchaseOrderItemData
 
 
 @admin.register(DrugData)
@@ -21,4 +21,30 @@ class DrugDataAdmin(admin.ModelAdmin):
         'drug_name',
         'formula',
         'brand',
+    )
+
+
+@admin.register(PurchaseOrderData)
+class PurchaseOrderDataAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'order_id',
+        'order_date',
+        'created',
+        'modified',
+    )
+    search_fields = (
+        'order_id',
+        'order_date',
+    )
+@admin.register(PurchaseOrderItemData)
+class PurchaseOrderItemDataAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'quantity',
+        'expiry_date',
+        'created',
+        'modified',
+    )
+    search_fields = (
     )

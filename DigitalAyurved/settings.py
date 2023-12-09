@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'master.apps.MasterConfig',
     'patient.apps.PatientConfig',
     'users.apps.UsersConfig',
+    'website.apps.WebsiteConfig',
     'blog.apps.BlogConfig',
 ]
 # Application definition
