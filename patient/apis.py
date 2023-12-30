@@ -12,7 +12,7 @@ import messages
 from doctor.models import DoctorsData
 from drugs.models import DrugData
 from helper.views import CustomDjangoDecorators, HelperAuthentication
-from master.models import MaterDoseData, MaterFrequencyData, MaterInstructionData
+from master.models import MasterDoseData, MasterFrequencyData, MasterInstructionData
 from .models import PatientsData, TreatmentRecord, PrescriptionRecord
 from .serializers import PatientsDataSerializer, PrescriptionRecordSerializer, TreatmentRecordSerializer
 
@@ -318,9 +318,9 @@ def delete_treatment_record(request):
 def get_prescription_details(request):
     treatment_table_id = request.GET.get(keys.TREATMENT_TABLE_ID, None)
 
-    dose_list = MaterDoseData.objects.filter().values_list('dose', flat=True)
-    frequency_list = MaterFrequencyData.objects.filter().values_list('frequency', flat=True)
-    instruction_list = MaterInstructionData.objects.filter().values_list('instruction', flat=True)
+    dose_list = MasterDoseData.objects.filter().values_list('dose', flat=True)
+    frequency_list = MasterFrequencyData.objects.filter().values_list('frequency', flat=True)
+    instruction_list = MasterInstructionData.objects.filter().values_list('instruction', flat=True)
     try:
         treatment_instance = TreatmentRecord.objects.get(id=treatment_table_id)
     except TreatmentRecord.DoesNotExist:
@@ -373,9 +373,9 @@ def get_prescription_details(request):
 @api_view(['GET'])
 @CustomDjangoDecorators.validate_access_token
 def get_prescription_supporting_data(request):
-    dose_list = MaterDoseData.objects.filter().values_list('dose', flat=True)
-    frequency_list = MaterFrequencyData.objects.filter().values_list('frequency', flat=True)
-    instruction_list = MaterInstructionData.objects.filter().values_list('instruction', flat=True)
+    dose_list = MasterDoseData.objects.filter().values_list('dose', flat=True)
+    frequency_list = MasterFrequencyData.objects.filter().values_list('frequency', flat=True)
+    instruction_list = MasterInstructionData.objects.filter().values_list('instruction', flat=True)
 
     response = {
         keys.SUCCESS: True,

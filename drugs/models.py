@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 import choices
-from master.models import MaterVendorData
+from master.models import MasterVendorData
 
 Users = get_user_model()
 
@@ -23,10 +23,10 @@ class DrugData(models.Model):
 
 
 class PurchaseOrderData(models.Model):
-    order_id = models.CharField(max_length=255)
+    order_id = models.CharField(max_length=255, null=True, blank=True)
     order_date = models.DateTimeField(null=True, blank=True)
-    vendor = models.ForeignKey(to=MaterVendorData, on_delete=models.CASCADE, related_name='purchase_vendor')
-    order_total = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
+    vendor = models.ForeignKey(to=MasterVendorData, on_delete=models.CASCADE, related_name='purchase_vendor')
+    order_total = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00), null=True, blank=True)
     # auto
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -36,7 +36,7 @@ class PurchaseOrderItemData(models.Model):
     drug = models.ForeignKey(to=DrugData, on_delete=models.CASCADE, related_name='purchase_drug')
     purchase_order = models.ForeignKey(to=PurchaseOrderData, on_delete=models.CASCADE, related_name='purchase_order')
     quantity = models.CharField(max_length=255)
-    expiry_date = models.DateTimeField(null=True, blank=True)
+    expiry_date = models.DateField(null=True, blank=True)
     unit_price = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
     # auto
     created = models.DateTimeField(auto_now_add=True)

@@ -1,15 +1,16 @@
 # Create your views here.
 from functools import wraps
 
-import messages
 import pytz
-from DigitalAyurved.settings import TIME_ZONE
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from pyotp import random_base32, TOTP
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 import keys
+import messages
+from DigitalAyurved.settings import TIME_ZONE
 
 
 class HelperAuthentication:
@@ -155,6 +156,20 @@ class CommonHelper:
             return '{:2.2f}'.format(round(float(amount)))
         else:
             return '{:2.2f}'.format(float(amount))
+
+    @staticmethod
+    def do_pagination(queryset, request):
+        page_number = request.GET.get(keys.PAGE_NUMBER, 1)
+        page_length = request.GET.get(keys.PAGE_LENGTH, 20)
+        paginator = Paginator(queryset, page_length)
+        try:
+            queryset = paginator.page(page_number)
+        except PageNotAnInteger:
+            queryset = paginator.page(1)
+        except EmptyPage:
+            queryset = paginator.page(paginator.num_pages)
+
+        return queryset, paginator.num_pages
 
     # @staticmethod
     # def send_email(to, email, subject, body, show_login_btn=False):
