@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'doctor.apps.DoctorConfig',
     'drugs.apps.DrugsConfig',
     'helper.apps.HelperConfig',
+    'inventory.apps.InventoryConfig',
     'master.apps.MasterConfig',
     'patient.apps.PatientConfig',
     'users.apps.UsersConfig',

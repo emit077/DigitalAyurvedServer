@@ -20,24 +20,3 @@ class DrugData(models.Model):
     # auto
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-
-
-class PurchaseOrderData(models.Model):
-    order_id = models.CharField(max_length=255, null=True, blank=True)
-    order_date = models.DateTimeField(null=True, blank=True)
-    vendor = models.ForeignKey(to=MasterVendorData, on_delete=models.CASCADE, related_name='purchase_vendor')
-    order_total = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00), null=True, blank=True)
-    # auto
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-
-
-class PurchaseOrderItemData(models.Model):
-    drug = models.ForeignKey(to=DrugData, on_delete=models.CASCADE, related_name='purchase_drug')
-    purchase_order = models.ForeignKey(to=PurchaseOrderData, on_delete=models.CASCADE, related_name='purchase_order')
-    quantity = models.CharField(max_length=255)
-    expiry_date = models.DateField(null=True, blank=True)
-    unit_price = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
-    # auto
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
