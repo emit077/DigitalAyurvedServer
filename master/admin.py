@@ -59,3 +59,8 @@ class MasterVendorDataAdmin(admin.ModelAdmin):
         'id',
         'reference',
     )
+    search_fields = (
+        'id',
+        'vendor_name',
+        'contact_number',
+    )

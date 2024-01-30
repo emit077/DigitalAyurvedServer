@@ -39,3 +39,6 @@ class MasterVendorData(models.Model):
     # auto
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "%s|%s" % (self.vendor_name, self.contact_number)

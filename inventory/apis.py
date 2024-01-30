@@ -11,8 +11,9 @@ import keys
 import messages
 from helper.views import CustomDjangoDecorators, CommonHelper
 from master.models import MasterVendorData
-from .models import DrugData, PurchaseOrderData, PurchaseOrderItemData
-from .serializers import PurchaseOrderDataSerializer
+from patient.models import PatientsData
+from .models import DrugData, OrderData, OrderDetailsData
+from .serializers import InOutItemDataSerializer
 
 Users = get_user_model()
 
@@ -70,29 +71,58 @@ Users = get_user_model()
 @CustomDjangoDecorators.validate_access_token
 def create_purchase_order(request):
     vendor_table_id = request.data.get(keys.VENDOR_TABLE_ID, None)
+    patient_table_id = request.data.get(keys.PATIENT_TABLE_ID, None)
     order_item_list = request.data.get(keys.ORDER_ITEM_LIST, None)
+    transaction_type = request.data.get(keys.TRANSACTION_TYPE, None)
+    comment = request.data.get(keys.COMMENT, None)
+    print("request.data=>",request.data.get(keys.TRANSACTION_TYPE, None))
+    # creating the purchase order
+    if transaction_type == keys.PURCHASE_ORDER:
+        try:
+            vendor_instance = MasterVendorData.objects.get(id=vendor_table_id)
+        except MasterVendorData.DoesNotExist:
+            return Response({
+                keys.SUCCESS: False,
+                keys.MESSAGE: messages.RECORD_NOT_FOUND
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        vendor_instance = MasterVendorData.objects.get(id=vendor_table_id)
-    except MasterVendorData.DoesNotExist:
-        return Response({
-            keys.SUCCESS: False,
-            keys.MESSAGE: messages.RECORD_NOT_FOUND
-        }, status=status.HTTP_400_BAD_REQUEST)
+        order_instance = OrderData.objects.create(
+            vendor=vendor_instance,
+            transaction_type=transaction_type,
+            order_date=timezone.now()
+        )
 
-    purchase_order_instance = PurchaseOrderData.objects.create(
-        vendor=vendor_instance,
-        order_date=timezone.now()
-    )
+    # creating Sells Order
+    elif transaction_type == keys.SALES_ORDER:
+        try:
+            patients_instance = PatientsData.objects.get(id=patient_table_id)
+        except PatientsData.DoesNotExist:
+            return Response({
+                keys.SUCCESS: False,
+                keys.MESSAGE: messages.RECORD_NOT_FOUND
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        order_instance = OrderData.objects.create(
+            patient=patients_instance,
+            transaction_type=transaction_type,
+            order_date=timezone.now()
+        )
+    else:
+        order_instance = OrderData.objects.create(
+            transaction_type=transaction_type,
+            comment=comment,
+            order_date=timezone.now()
+        )
+
     if order_item_list and isinstance(order_item_list, str):
         order_item_list = json.loads(order_item_list)
         for item in order_item_list:
             print("item==", item)
 
             drug = DrugData.objects.get(id=item["drug"])
-            PurchaseOrderItemData.objects.create(
+            OrderDetailsData.objects.create(
                 drug=drug,
-                purchase_order=purchase_order_instance,
+                order_data=order_instance,
                 quantity=item["qty"],
                 expiry_date=item["expiry_date"],
                 unit_price=item["unit_price"]
@@ -109,7 +139,7 @@ def create_purchase_order(request):
 @CustomDjangoDecorators.validate_access_token
 def list_purchase_order(request):
     search_query = request.GET.get(keys.SEARCH_QUERY, None)
-    queryset = PurchaseOrderData.objects.all().order_by('-id')
+    queryset = OrderData.objects.all().order_by('-id')
 
     if search_query:
         queryset = queryset.filter(
@@ -117,7 +147,7 @@ def list_purchase_order(request):
             Q(vendor__contact_number__icontains=search_query))
     # pagination
     queryset, total_page_count = CommonHelper.do_pagination(queryset, request)
-    purchase_order_list = PurchaseOrderDataSerializer(queryset, many=True).data
+    purchase_order_list = InOutItemDataSerializer(queryset, many=True).data
 
     response = {
         keys.SUCCESS: True,

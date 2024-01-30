@@ -30,6 +30,22 @@ MG = "mg"
 GRAM = "gram"
 CUP = "cup"
 
+#
+TRANSACTION_TYPE = "transaction_type"
+PURCHASE_ORDER = "Purchase Order"
+SALES_ORDER = "Sales Order"
+SHRINK_ITEM = "Shrink Item"
+ARCHIVE_ITEM = "Archive Item"
+EXPIRED_ITEM = "Expired Item"
+# abbreviation
+TRANSACTION_DICT = {
+    "Purchase Order": "PO",
+    "Sales Order": "SO",
+    "Shrink Item": "SI",
+    "Archive Item": "AI",
+    "Expired Item": "EI",
+}
+
 MOBILE = 'mobile'
 PASSWORD = 'password'
 MESSAGE = 'message'
@@ -101,6 +117,7 @@ VENDOR_TABLE_ID = "vendor_table_id"
 PURCHASE_ORDER_TABLE_ID = "purchase_order_table_id"
 
 SUGGESTIONS = "suggestions"
+COMMENT = "comment"
 
 # date format
 DJANGO_DATE_FORMAT = '%Y-%m-%d'
