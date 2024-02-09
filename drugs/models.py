@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 import choices
-from master.models import MasterVendorData
 
 Users = get_user_model()
 
@@ -20,3 +19,6 @@ class DrugData(models.Model):
     # auto
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "%s|%s(%s)" % (self.id, self.drug_name, self.brand)

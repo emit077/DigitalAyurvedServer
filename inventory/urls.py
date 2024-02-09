@@ -7,4 +7,7 @@ from . import apis
 urlpatterns = [
     re_path('^create-purchase-order/$', apis.create_purchase_order),
     re_path('^list-purchase-order/$', apis.list_purchase_order),
+    re_path('^create-invoice/$', apis.create_invoice),
+    re_path('^list-invoice/$', apis.list_invoice),
+    re_path('^get-invoice-details/$', apis.get_invoice_details),
 ]

@@ -181,3 +181,28 @@ class CommonHelper:
     #     template = get_template('reg_email-template.html')
     #     html = template.render(data_dict)
     #     send_email(to=email, subject=subject, content=html)
+
+
+class CalculationHelper:
+    @staticmethod
+    def cal_discount(amount, discount_val, discount_type=keys.PERCENT_DISCOUNT):
+        amount = float(amount)
+        discount_val = float(discount_val)
+        if discount_type == keys.FLAT_DISCOUNT:
+            discount_amount = amount - discount_val
+        else:
+            discount_amount = (amount * discount_val) / 100
+        return round(discount_amount, 2)
+
+    @staticmethod
+    def cal_round_off(amount):
+        amount = float(amount)
+        round_off_amt = round(1 - (amount - int(amount)), 2)
+        if round_off_amt >= 1:
+            round_off_amt = 0
+
+        return round_off_amt
+
+    @staticmethod
+    def cal_item_total():
+        return 0
