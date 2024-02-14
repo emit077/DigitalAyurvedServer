@@ -6,4 +6,3 @@ media/
 static/
 .env
 /venv
-*/migrations/
