@@ -33,7 +33,7 @@ class PatientsDataSerializer(serializers.ModelSerializer):
                   ]
 
     def get_patient_name(self, obj):
-        return obj.patient.patient_name()
+        return obj.patient_name()
 class PrescriptionRecordSerializer(serializers.ModelSerializer):
     drug_name = serializers.CharField(source="drug.drug_name")
 
