@@ -103,7 +103,7 @@ if env('IS_PRODUCTION')==True:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'digitalayurveddb',
+            'NAME': 'postgresql',
             'USER': 'django_postgres',
             'PASSWORD': 'password',
             'HOST': 'localhost',
