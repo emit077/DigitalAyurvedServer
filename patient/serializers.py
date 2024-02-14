@@ -10,7 +10,7 @@ User = get_user_model()
 class PatientsDataSerializer(serializers.ModelSerializer):
     patient_table_id = serializers.CharField(source="id")
     user_table_id = serializers.CharField(source="user.id")
-    name = serializers.CharField(source="user.name")
+    name = serializers.CharField(source="user.patient_name")
     mobile = serializers.CharField(source="user.mobile")
     email = serializers.CharField(source="user.email")
     is_active = serializers.BooleanField(source="user.is_active")
