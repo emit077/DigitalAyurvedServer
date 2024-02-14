@@ -10,7 +10,7 @@ User = get_user_model()
 class PatientsDataSerializer(serializers.ModelSerializer):
     patient_table_id = serializers.CharField(source="id")
     user_table_id = serializers.CharField(source="user.id")
-    name = serializers.CharField(source="user.patient_name")
+    patient_name = serializers.SerializerMethodField()
     mobile = serializers.CharField(source="user.mobile")
     email = serializers.CharField(source="user.email")
     is_active = serializers.BooleanField(source="user.is_active")
@@ -20,7 +20,7 @@ class PatientsDataSerializer(serializers.ModelSerializer):
         fields = ['patient_table_id',
                   'user_table_id',
                   'is_active',
-                  'name',
+                  'patient_name',
                   'mobile',
                   'email',
                   'gender',
@@ -32,7 +32,8 @@ class PatientsDataSerializer(serializers.ModelSerializer):
                   "occupation",
                   ]
 
-
+    def get_patient_name(self, obj):
+        return obj.patient.patient_name()
 class PrescriptionRecordSerializer(serializers.ModelSerializer):
     drug_name = serializers.CharField(source="drug.drug_name")
 
