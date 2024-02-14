@@ -27,6 +27,9 @@ class PatientsData(models.Model):
     def __str__(self):
         return "%s %s | %s " % (self.patient_first_name, self.patient_last_name, self.user.mobile)
 
+    def patient_name(self):
+        return self.patient_first_name + " " + self.patient_last_name
+
 
 class TreatmentRecord(models.Model):
     patient = models.ForeignKey(to=PatientsData, on_delete=models.CASCADE, related_name='patient_record', )

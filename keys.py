@@ -30,6 +30,22 @@ MG = "mg"
 GRAM = "gram"
 CUP = "cup"
 
+#
+TRANSACTION_TYPE = "transaction_type"
+PURCHASE_ORDER = "Purchase Order"
+SALES_ORDER = "Sales Order"
+SHRINK_ITEM = "Shrink Item"
+ARCHIVE_ITEM = "Archive Item"
+EXPIRED_ITEM = "Expired Item"
+# abbreviation
+TRANSACTION_DICT = {
+    "Purchase Order": "PO",
+    "Sales Order": "SO",
+    "Shrink Item": "SI",
+    "Archive Item": "AI",
+    "Expired Item": "EI",
+}
+
 MOBILE = 'mobile'
 PASSWORD = 'password'
 MESSAGE = 'message'
@@ -82,19 +98,40 @@ DRUG_LIST = "drug_list"
 BLOG_LIST = "blog_list"
 BLOG_DATA = "blog_data"
 PATIENT_LIST = "patient_list"
+VENDOR_LIST = "vendor_list"
+ENQUIRY_LIST = "enquiry_list"
+ORDER_ITEM_LIST = "order_item_list"
+PURCHASE_ORDER_LIST = "purchase_order_list"
 
 DOSE_LIST = "dose_list"
 FREQUENCY_LIST = "frequency_list"
 INSTRUCTION_LIST = "instruction_list"
 TREATMENT_HISTORY = "treatment_history"
 
+DISCOUNT_TYPE = "discount_type"
+DISCOUNT_VALUE = "discount_value"
+FLAT_DISCOUNT = "Flat Discount"
+PERCENT_DISCOUNT = "Percent Discount"
+INVOICE_ID = "invoice_id"
+
 DOCTOR_TABLE_ID = "doctor_table_id"
 PATIENT_TABLE_ID = "patient_table_id"
 DRUG_TABLE_ID = "drug_table_id"
 TREATMENT_TABLE_ID = "treatment_table_id"
 BLOG_TABLE_ID = "blog_table_id"
+VENDOR_TABLE_ID = "vendor_table_id"
+PURCHASE_ORDER_TABLE_ID = "purchase_order_table_id"
+INVOICE_TABLE_ID = "invoice_table_id"
+
+IN = "In"
+OUT = "Out"
+
+INVOICE_LIST = "invoice_list"
+INVOICE_DATA = "invoice_data"
+INVOICE_ITEMS = "invoice_items"
 
 SUGGESTIONS = "suggestions"
+COMMENT = "comment"
 
 # date format
 DJANGO_DATE_FORMAT = '%Y-%m-%d'

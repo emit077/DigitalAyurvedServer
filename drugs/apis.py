@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,7 +6,7 @@ from rest_framework.response import Response
 
 import keys
 import messages
-from helper.views import CustomDjangoDecorators
+from helper.views import CustomDjangoDecorators, CommonHelper
 from .models import DrugData
 from .serializers import DrugDataSerializer
 
@@ -78,10 +77,7 @@ def delete_drug(request):
 @api_view(['GET'])
 @CustomDjangoDecorators.validate_access_token
 def list_drug(request):
-    page_number = request.GET.get(keys.PAGE_NUMBER, 1)
-    page_length = request.GET.get(keys.PAGE_LENGTH, 20)
     search_query = request.GET.get(keys.SEARCH_QUERY, None)
-
     queryset = DrugData.objects.all().order_by('-id')
 
     if search_query:
@@ -89,21 +85,14 @@ def list_drug(request):
             Q(drug_name__icontains=search_query) |
             Q(formula__icontains=search_query) |
             Q(brand__icontains=search_query))
-
-    paginator = Paginator(queryset, page_length)
-    try:
-        queryset = paginator.page(page_number)
-    except PageNotAnInteger:
-        queryset = paginator.page(1)
-    except EmptyPage:
-        queryset = paginator.page(paginator.num_pages)
-
+    # pagination
+    queryset, total_page_count = CommonHelper.do_pagination(queryset, request)
     drug_list = DrugDataSerializer(queryset, many=True).data
 
     response = {
         keys.SUCCESS: True,
         keys.MESSAGE: messages.SUCCESS,
-        keys.TOTAL_PAGE_COUNT: paginator.num_pages,
+        keys.TOTAL_PAGE_COUNT: total_page_count,
         keys.DRUG_LIST: drug_list,
     }
     return Response(response, status=status.HTTP_200_OK)

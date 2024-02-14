@@ -25,3 +25,14 @@ DRUG_UNIT = [
     (keys.MG, keys.MG),
     (keys.CUP, keys.CUP),
 ]
+TRANSACTION_TYPE_CHOICES = [
+    (keys.PURCHASE_ORDER, keys.PURCHASE_ORDER),
+    (keys.SALES_ORDER, keys.SALES_ORDER),
+    (keys.SHRINK_ITEM, keys.SHRINK_ITEM),
+    (keys.ARCHIVE_ITEM, keys.ARCHIVE_ITEM),
+    (keys.EXPIRED_ITEM, keys.EXPIRED_ITEM),
+]
+DISCOUNT_TYPE_CHOICES = [
+    (keys.PERCENT_DISCOUNT, keys.PERCENT_DISCOUNT),
+    (keys.FLAT_DISCOUNT, keys.FLAT_DISCOUNT)
+]

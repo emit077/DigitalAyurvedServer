@@ -1,0 +1,165 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Tax Invoice</title>
+    <style>
+        body {
+            font-family: Arial;
+        }
+
+        p {
+            margin: 5px 0px 0px 0px;
+        }
+
+        .title-text {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #item-table, #item-table tr, #summary-table, #summary-table tr {
+            border-top: solid lightgray 1px;
+            border-bottom: solid lightgray 1px;
+            border-collapse: collapse;
+        }
+
+        #item-table tr th, #summary-table tr th {
+            padding: 10px;
+            background-color: #c9c9c9 !important;
+        }
+
+        #item-table th {
+            text-align: left;
+        }
+
+        #item-table tr td, #summary-table tr td {
+            padding: 10px 7px;
+        }
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+<table style="width: 100%">
+    <tr>
+        <td style="width: 50%;padding-right: 10px">
+            <img src="{{ data.logo_url }}" alt="" style="height: 120px;">
+            <p class="title-text">Digital Ayurved </p>
+            <p>Bus Stand Pawani, Dist. Sarangarh-Bilaigarh (CG)</p>
+            <!--            {% if data.invoice_type == 'GST Invoice' %} -->
+            <!--            <p>GSTIN:{{ data.gst_number }} </p> -->
+            <!--            {% endif %} -->
+            <p>{{ data.company_email }}</p>
+            <p>{{ data.company_website }} </p>
+        </td>
+        <td style="padding-left: 10px">
+            <h1>Tax Invoice</h1>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 50%;padding-right: 10px">
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 30%"><p>Invoice No. :</p></td>
+                    <td>{{ data.invoice_number }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 30%"><p>Invoice Date :</p></td>
+                    <td>{{ data.invoice_date }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 30%"><p>Due Date :</p></td>
+                    <td>{{ data.due_date }}</td>
+                </tr>
+            </table>
+        </td>
+        <td style="padding-left: 10px">
+            To:
+
+            <p class="title-text">{{ data.buyer_name }}</p>
+            <p>{{ data.buyer_mobile }}</p>
+            <p>{{ data.buyer_email }}</p>
+            <p>{{ data.buyer_mobile }}</p>
+            <p>{{ data.buyer_address }}</p>
+        </td>
+    </tr>
+</table>
+
+<table style="width: 100%;margin-top: 10px" id="item-table">
+    <tr>
+        <th style="background-color: #d3d3d382;">Item</th>
+        <th style="text-align: right">Rate</th>
+        <th style="text-align: right">Qty</th>
+        <th style="text-align: right">Subtotal</th>
+    </tr>
+    <tr>
+        <td>{{ data.item_name }}</td>
+        <td style="text-align: right">{{ data.qty }}</td>
+        <td style="text-align: right">{{ data.rate }}</td>
+        <td style="text-align: right">{{ data.subtotal }}</td>
+    </tr>
+</table>
+<div>
+    <div style="width: 49%; display: inline-block; margin-top: 15px; vertical-align: top">
+        <p>Invoice Total In words:</p>
+        <p><b>{{ data.amount_in_words }}</b></p>
+        </tr>
+    </div>
+    <div style="width: 50%; display: inline-block; margin-top: 15px">
+        <table id="summary-table" style="width: 100%;">
+            <tr>
+                <th colspan="2">Invoice Summary</th>
+            </tr>
+            <tr>
+                <td>Subtotal</td>
+                <td style="text-align: right">{{ data.rate }}</td>
+            </tr>
+            {% if data.discount_amount>0 %}
+            <tr>
+                <td>Discount</td>
+                <td style="text-align: right"><small>(-)</small> {{ data.discount_amount }}</td>
+            </tr>
+            {% endif %}
+            <tr style="background-color: #c9c9c9 !important;">
+                <td><b>Total</b></td>
+                <td style="text-align: right"><b>₹{{ data.item_total }}</b></td>
+            </tr>
+            <tr style="background-color: #c9c9c9 !important;">
+                <td><b>Round off</b></td>
+                <td style="text-align: right"><b>₹{{ data.round_off_amt }}</b></td>
+            </tr>
+            <tr style="background-color: #c9c9c9 !important;">
+                <td><b>Invoice Total</b></td>
+                <td style="text-align: right"><b>₹{{ data.invoice_total }}</b></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<hr>
+<div>
+    Terms and conditions:
+<!--    <ul style="margin-top: 3px">-->
+<!--        <li>The plan hours will not be valid after the plan expiry date.</li>-->
+<!--        <li>In case tuition will be discontinued from the parents or the student (whatever the reason is)fee will not be-->
+<!--            refunded.-->
+<!--        </li>-->
+<!--        <li>In case of payment by cheque the requested services will be provided by the company only on the realization-->
+<!--            of the-->
+<!--            cheque. If the cheque bounces/ fails to be realized if the company is required to present an alternate-->
+<!--            cheque for-->
+<!--            any reason any banking charges incurred by the company in this regard are recoverable by the company from-->
+<!--            the issue-->
+<!--            of such cheque.-->
+<!--        </li>-->
+<!--        <li>If parents exceed the due date of the instalment the classes will be discontinued immediately.</li>-->
+<!--    </ul>-->
+
+</div>
+
+</body>
+</html>

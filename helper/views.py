@@ -1,15 +1,16 @@
 # Create your views here.
 from functools import wraps
 
-import messages
 import pytz
-from DigitalAyurved.settings import TIME_ZONE
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from pyotp import random_base32, TOTP
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 import keys
+import messages
+from DigitalAyurved.settings import TIME_ZONE
 
 
 class HelperAuthentication:
@@ -156,6 +157,20 @@ class CommonHelper:
         else:
             return '{:2.2f}'.format(float(amount))
 
+    @staticmethod
+    def do_pagination(queryset, request):
+        page_number = request.GET.get(keys.PAGE_NUMBER, 1)
+        page_length = request.GET.get(keys.PAGE_LENGTH, 20)
+        paginator = Paginator(queryset, page_length)
+        try:
+            queryset = paginator.page(page_number)
+        except PageNotAnInteger:
+            queryset = paginator.page(1)
+        except EmptyPage:
+            queryset = paginator.page(paginator.num_pages)
+
+        return queryset, paginator.num_pages
+
     # @staticmethod
     # def send_email(to, email, subject, body, show_login_btn=False):
     #     data_dict = {"data": {
@@ -166,3 +181,28 @@ class CommonHelper:
     #     template = get_template('reg_email-template.html')
     #     html = template.render(data_dict)
     #     send_email(to=email, subject=subject, content=html)
+
+
+class CalculationHelper:
+    @staticmethod
+    def cal_discount(amount, discount_val, discount_type=keys.PERCENT_DISCOUNT):
+        amount = float(amount)
+        discount_val = float(discount_val)
+        if discount_type == keys.FLAT_DISCOUNT:
+            discount_amount = amount - discount_val
+        else:
+            discount_amount = (amount * discount_val) / 100
+        return round(discount_amount, 2)
+
+    @staticmethod
+    def cal_round_off(amount):
+        amount = float(amount)
+        round_off_amt = round(1 - (amount - int(amount)), 2)
+        if round_off_amt >= 1:
+            round_off_amt = 0
+
+        return round_off_amt
+
+    @staticmethod
+    def cal_item_total():
+        return 0

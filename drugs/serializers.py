@@ -8,6 +8,7 @@ User = get_user_model()
 
 class DrugDataSerializer(serializers.ModelSerializer):
     drug_table_id = serializers.CharField(source="id")
+    brand = serializers.CharField(source="brand.brand_name")
 
     class Meta:
         model = DrugData
@@ -15,8 +16,8 @@ class DrugDataSerializer(serializers.ModelSerializer):
             'id',
             'drug_table_id',
             "drug_name",
-            "formula",
             "brand",
+            "formula",
             "mrp",
             "drug_unit",
             "anupaan",

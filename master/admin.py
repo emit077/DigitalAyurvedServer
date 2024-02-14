@@ -1,61 +1,66 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from .models import MaterDoseData, MaterInstructionData, MaterFrequencyData, MaterBrandData, MaterPackagingData, \
-    MaterReferenceData, MaterVendorData
+from .models import MasterDoseData, MasterInstructionData, MasterFrequencyData, MasterBrandData, MasterPackagingData, \
+    MasterReferenceData, MasterVendorData
 
 
-@admin.register(MaterDoseData)
-class MaterDoseDataAdmin(admin.ModelAdmin):
+@admin.register(MasterDoseData)
+class MasterDoseDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'dose',
     )
 
 
-@admin.register(MaterInstructionData)
-class MaterInstructionDataAdmin(admin.ModelAdmin):
+@admin.register(MasterInstructionData)
+class MasterInstructionDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'instruction',
     )
 
 
-@admin.register(MaterFrequencyData)
-class MaterFrequencyDataAdmin(admin.ModelAdmin):
+@admin.register(MasterFrequencyData)
+class MasterFrequencyDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'frequency',
     )
 
 
-@admin.register(MaterBrandData)
-class MaterBrandDataAdmin(admin.ModelAdmin):
+@admin.register(MasterBrandData)
+class MasterBrandDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'brand_name',
     )
 
 
-@admin.register(MaterPackagingData)
-class MaterPackagingDataAdmin(admin.ModelAdmin):
+@admin.register(MasterPackagingData)
+class MasterPackagingDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'packaging_type',
     )
 
 
-@admin.register(MaterReferenceData)
-class MaterReferenceDataAdmin(admin.ModelAdmin):
+@admin.register(MasterReferenceData)
+class MasterReferenceDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'reference',
     )
 
 
-@admin.register(MaterVendorData)
-class MaterVendorDataAdmin(admin.ModelAdmin):
+@admin.register(MasterVendorData)
+class MasterVendorDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'reference',
+    )
+    search_fields = (
+        'id',
+        'vendor_name',
+        'contact_number',
     )
