@@ -15,7 +15,9 @@ from helper.views import CustomDjangoDecorators, CommonHelper, CalculationHelper
 from master.models import MasterVendorData
 from patient.models import PatientsData
 from .models import DrugData, OrderData, OrderDetailsData, InvoiceDetailsData, InvoiceData
-from .serializers import OrderDataSerializer, InvoiceDataSerializer, InvoiceDetailsDataSerializer
+from .serializers import OrderDataSerializer, InvoiceDataSerializer, InvoiceDetailsDataSerializer, \
+    OrderDetailsAutocompleteSerializer
+from .views import update_available_item
 
 Users = get_user_model()
 
@@ -24,7 +26,6 @@ Users = get_user_model()
 @CustomDjangoDecorators.validate_access_token
 def create_purchase_order(request):
     vendor_table_id = request.data.get(keys.VENDOR_TABLE_ID, None)
-    patient_table_id = request.data.get(keys.PATIENT_TABLE_ID, None)
     order_item_list = request.data.get(keys.ORDER_ITEM_LIST, None)
     transaction_type = request.data.get(keys.TRANSACTION_TYPE, None)
     comment = request.data.get(keys.COMMENT, None)
@@ -43,20 +44,27 @@ def create_purchase_order(request):
             transaction_type=transaction_type,
             order_date=timezone.now()
         )
-
+    item_total = 0
     if order_item_list and isinstance(order_item_list, str):
         order_item_list = json.loads(order_item_list)
 
         for item in order_item_list:
-            drug = DrugData.objects.get(id=item["drug"])
+            # drug = DrugData.objects.get(id=item["drug"])
+            drug = DrugData.objects.get(id=int(item["drug"]["drug_table_id"]))
+            # calculating the discount and discounted price
+            item_total = float(item["qty"]) * float(item["unit_price"]) + item_total
+
             OrderDetailsData.objects.create(
                 drug=drug,
                 order_data=order_instance,
                 quantity=item["qty"],
+                available_qty=item["qty"],
                 expiry_date=item["expiry_date"],
-                unit_price=item["unit_price"]
+                unit_price=item["unit_price"],
+                mrp=item["mrp"],
             )
-
+    order_instance.order_total = item_total
+    order_instance.save()
     response = {
         keys.SUCCESS: True,
         keys.MESSAGE: messages.SUCCESS,
@@ -87,52 +95,87 @@ def list_purchase_order(request):
     return Response(response, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@CustomDjangoDecorators.validate_access_token
+def sales_drug_list(request):
+    search_query = request.GET.get(keys.SEARCH_QUERY, None)
+    queryset = OrderDetailsData.objects.filter(available_qty__gt=0).order_by('drug__drug_name', 'expiry_date')
+
+    if search_query:
+        queryset = queryset.filter(
+            Q(drug__drug_name__icontains=search_query) |
+            Q(drug__id__icontains=search_query))
+    # pagination
+    queryset, total_page_count = CommonHelper.do_pagination(queryset, request)
+    drug_list = OrderDetailsAutocompleteSerializer(queryset, many=True).data
+
+    response = {
+        keys.SUCCESS: True,
+        keys.MESSAGE: messages.SUCCESS,
+        keys.TOTAL_PAGE_COUNT: total_page_count,
+        keys.DRUG_LIST: drug_list,
+    }
+    return Response(response, status=status.HTTP_200_OK)
+
+
+# Invoice APIs
+# ---------------------------------------------------------------
 @api_view(['POST'])
 @CustomDjangoDecorators.validate_access_token
 def create_invoice(request):
+    invoice_table_id = request.data.get(keys.INVOICE_TABLE_ID, None)
     patient_table_id = request.data.get(keys.PATIENT_TABLE_ID, None)
     order_item_list = request.data.get(keys.ORDER_ITEM_LIST, None)
     discount_value = request.data.get(keys.DISCOUNT_VALUE, None)
-    discount_type = request.data.get(keys.DISCOUNT_TYPE, None)
-    comment = request.data.get(keys.COMMENT, None)
 
     try:
-        patients_instance = PatientsData.objects.get(id=patient_table_id)
+        patients_instance = PatientsData.objects.get(id=int(patient_table_id))
     except PatientsData.DoesNotExist:
         return Response({
             keys.SUCCESS: False,
             keys.MESSAGE: messages.RECORD_NOT_FOUND
         }, status=status.HTTP_400_BAD_REQUEST)
 
-    invoice_instance = InvoiceData.objects.create(
-        patient=patients_instance,
-        invoice_date=timezone.now()
-    )
+    if invoice_table_id:
+        try:
+            invoice_instance = InvoiceData.objects.get(id=int(invoice_table_id))
+            # find and delete all the records and create new records
+            for item in InvoiceDetailsData.objects.filter(invoice_data=invoice_instance):
+                update_available_item(item, keys.IN)
+                item.delete()
+
+        except InvoiceData.DoesNotExist:
+            return Response({
+                keys.SUCCESS: False,
+                keys.MESSAGE: messages.RECORD_NOT_FOUND
+            }, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        invoice_instance = InvoiceData.objects.create(
+            patient=patients_instance,
+            invoice_date=timezone.now()
+        )
     invoice_total = 0
     total_discount = 0
     invoice_item_total = 0
     if order_item_list and isinstance(order_item_list, str):
         for item in json.loads(order_item_list):
-            drug = DrugData.objects.get(id=item["drug"])
             # calculating the discount and discounted price
-            item_total = float(item["qty"]) * float(item["unit_price"])
+            item_total = float(item["qty"]) * float(item["drug"]["mrp"])
             discount_amount = CalculationHelper.cal_discount(item_total, discount_value)
 
             invoice_total = invoice_total + (item_total - discount_amount)
             total_discount = total_discount + discount_amount
             invoice_item_total = invoice_item_total + item_total
 
-            # print("item[""])==", item["qty"], item["unit_price"], "=", item_total)
-            # print("discount_amount==", discount_amount)
-
-            InvoiceDetailsData.objects.create(
-                drug=drug,
+            invoice_item = InvoiceDetailsData.objects.create(
+                drug=DrugData.objects.get(id=int(item["drug"]["drug_table_id"])),
+                order_items=OrderDetailsData.objects.get(id=int(item["drug"]["order_items_table_id"])),
                 invoice_data=invoice_instance,
                 quantity=item["qty"],
-                expiry_date=item["expiry_date"],
                 selling_price=round((item_total - discount_amount) / float(item["qty"]), 2),
-                mrp=0
+                mrp=float(item["drug"]["mrp"])
             )
+            update_available_item(invoice_item, keys.OUT)
 
     # update the invoice data
     round_off_amt = CalculationHelper.cal_round_off(invoice_total)
@@ -147,6 +190,7 @@ def create_invoice(request):
     response = {
         keys.SUCCESS: True,
         keys.MESSAGE: messages.SUCCESS,
+        keys.INVOICE_TABLE_ID: invoice_instance.id,
     }
     return Response(response, status=status.HTTP_200_OK)
 
@@ -160,7 +204,7 @@ def list_invoice(request):
     if search_query:
         queryset = queryset.filter(
             Q(invoice_id__icontains=search_query) |
-            Q(patient__first_name__icontains=search_query) |
+            Q(patient__patient_first_name__icontains=search_query) |
             Q(patient__user__mobile__icontains=search_query) |
             Q(patient__patient_id__icontains=search_query))
 
@@ -182,13 +226,13 @@ def list_invoice(request):
 def get_invoice_details(request):
     invoice_table_id = request.GET.get(keys.INVOICE_TABLE_ID, None)
 
-    # try:
-    invoice_instance = InvoiceData.objects.get(id=invoice_table_id)
-    # except InvoiceData.DoesNotExist:
-    #     return Response({
-    #         keys.SUCCESS: False,
-    #         keys.MESSAGE: messages.RECORD_NOT_FOUND
-    #     }, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        invoice_instance = InvoiceData.objects.get(id=invoice_table_id)
+    except InvoiceData.DoesNotExist:
+        return Response({
+            keys.SUCCESS: False,
+            keys.MESSAGE: messages.RECORD_NOT_FOUND
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     invoice_details_instance = InvoiceDetailsData.objects.filter(invoice_data=invoice_instance)
 

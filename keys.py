@@ -123,6 +123,9 @@ VENDOR_TABLE_ID = "vendor_table_id"
 PURCHASE_ORDER_TABLE_ID = "purchase_order_table_id"
 INVOICE_TABLE_ID = "invoice_table_id"
 
+IN = "In"
+OUT = "Out"
+
 INVOICE_LIST = "invoice_list"
 INVOICE_DATA = "invoice_data"
 INVOICE_ITEMS = "invoice_items"

@@ -9,7 +9,6 @@ class DrugDataAdmin(admin.ModelAdmin):
         'id',
         'drug_name',
         'formula',
-        'brand',
         'drug_unit',
         'anupaan',
         'formulation',
@@ -20,5 +19,4 @@ class DrugDataAdmin(admin.ModelAdmin):
     search_fields = (
         'drug_name',
         'formula',
-        'brand',
     )

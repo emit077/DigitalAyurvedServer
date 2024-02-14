@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 import keys
-from master.serializers import VendorDataSerializer
 from .models import OrderData, OrderDetailsData, InvoiceDetailsData, InvoiceData
 
 User = get_user_model()
@@ -10,7 +9,8 @@ User = get_user_model()
 
 class OrderDataSerializer(serializers.ModelSerializer):
     purchase_order_table_id = serializers.CharField(source="id")
-    vendor = serializers.SerializerMethodField()
+    vendor_table_id = serializers.CharField(source="vendor.id")
+    vendor_name = serializers.CharField(source="vendor.vendor_name")
     order_date = serializers.DateTimeField(format=keys.DATE_TIME_FORMAT)
 
     class Meta:
@@ -20,20 +20,18 @@ class OrderDataSerializer(serializers.ModelSerializer):
             'purchase_order_table_id',
             "order_id",
             "order_date",
-            "vendor",
+            "vendor_table_id",
+            "vendor_name",
             "order_total",
             "comment",
             "transaction_type"
         ]
 
-    def get_vendor(self, obj):
-        if obj.vendor:
-            return None
-        return VendorDataSerializer(obj.vendor).data
 
 
 class OrderDetailsDataSerializer(serializers.ModelSerializer):
-    purchase_order_item_table_id = serializers.CharField(source="id")
+    order_items_table_id = serializers.CharField(source="id")
+    drug_table_id = serializers.CharField(source="drug.id")
     drug_name = serializers.CharField(source="drug.drug_name")
     purchase_order_table_id = serializers.CharField(source="purchase_order.id")
 
@@ -41,23 +39,49 @@ class OrderDetailsDataSerializer(serializers.ModelSerializer):
         model = OrderDetailsData
         fields = [
             'id',
-            'purchase_order_table_id',
+            'order_items_table_id',
             'purchase_order_item_table_id',
+            "drug_table_id",
+            "drug_name",
             "quantity",
             "expiry_date",
             "unit_price",
         ]
 
 
+class OrderDetailsAutocompleteSerializer(serializers.ModelSerializer):
+    order_items_table_id = serializers.CharField(source="id")
+    drug_table_id = serializers.CharField(source="drug.id")
+    drug_name = serializers.CharField(source="drug.drug_name")
+    brand_name = serializers.CharField(source="drug.brand.brand_name")
+    expiry_date = serializers.DateField(format=keys.DATE_FORMAT)
+
+    class Meta:
+        model = OrderDetailsData
+        fields = [
+            'order_items_table_id',
+            "drug_table_id",
+            "drug_name",
+            "brand_name",
+            "mrp",
+            "expiry_date",
+            "available_qty",
+        ]
+
+
 class InvoiceDataSerializer(serializers.ModelSerializer):
     patient_name = serializers.SerializerMethodField()
+    patient_table_id = serializers.CharField(source="patient.id")
+    invoice_table_id = serializers.CharField(source="id")
     invoice_date = serializers.DateTimeField(format=keys.DATE_TIME_FORMAT)
 
     class Meta:
         model = InvoiceData
         fields = [
             'id',
+            'invoice_table_id',
             'invoice_id',
+            'patient_table_id',
             'patient_name',
             'invoice_date',
             'item_total',
@@ -76,13 +100,17 @@ class InvoiceDataSerializer(serializers.ModelSerializer):
 class InvoiceDetailsDataSerializer(serializers.ModelSerializer):
     invoice_id = serializers.CharField(source="invoice_data.invoice_id")
     drug_name = serializers.CharField(source="drug.drug_name")
+    drug_table_id = serializers.CharField(source="drug.id")
+    order_items_table_id = serializers.CharField(source="order_items.id")
     subtotal = serializers.SerializerMethodField()
 
     class Meta:
         model = InvoiceDetailsData
         fields = [
             'id',
+            'order_items_table_id',
             "drug_name",
+            "drug_table_id",
             "invoice_id",
             "quantity",
             "expiry_date",

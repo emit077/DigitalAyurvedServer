@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 import choices
+from master.models import MasterBrandData
 
 Users = get_user_model()
 
@@ -11,7 +12,7 @@ Users = get_user_model()
 class DrugData(models.Model):
     drug_name = models.CharField(max_length=255)
     formula = models.CharField(max_length=255, null=True, blank=True)
-    brand = models.CharField(max_length=100, null=True, blank=True)
+    brand = models.ForeignKey(to=MasterBrandData, on_delete=models.CASCADE, related_name='drug_brand')
     drug_unit = models.CharField(max_length=255, choices=choices.DRUG_UNIT, null=True, blank=True)
     anupaan = models.CharField(max_length=150, null=True, blank=True)
     formulation = models.CharField(max_length=150, null=True, blank=True)
@@ -21,4 +22,4 @@ class DrugData(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "%s|%s(%s)" % (self.id, self.drug_name, self.brand)
+        return "%s|%s(%s)" % (self.id, self.drug_name, self.brand.brand_name)

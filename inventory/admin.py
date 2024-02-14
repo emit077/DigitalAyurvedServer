@@ -26,13 +26,16 @@ class OrderDataAdmin(admin.ModelAdmin):
 class OrderDetailsDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
+        'drug',
         'quantity',
+        'available_qty',
         'expiry_date',
         'created',
         'modified',
     )
     search_fields = ()
     autocomplete_fields = ['drug']
+    list_filter = ["expiry_date"]
 
 
 @admin.register(InvoiceData)
