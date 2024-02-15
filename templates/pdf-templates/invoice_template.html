@@ -104,7 +104,7 @@
     </tr>
     {% endfor %}
     <tr>
-        <td colspan="2" rowspan="4" style="background-color:#fffff; vertical-align:top;">
+        <td colspan="2" rowspan="4" style="background-color:#fff !important; vertical-align:top;">
             <p>Invoice Total In words:</p>
             <p><b>{{ data.invoice_total_in_words }}</b></p>
         </td>
@@ -124,7 +124,7 @@
         <td style="text-align: right"> {{ data.round_off }}</td>
     </tr>
     {% endif %}
-    <tr style=" border-bottom:none !important;">
+    <tr>
         <td colspan="2" style="text-align: right;font-weight:bold">Invoice Total</td>
         <td style="text-align: right; font-weight:bold"> {{ data.invoice_total }}</td>
     </tr>

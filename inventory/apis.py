@@ -268,7 +268,7 @@ def get_invoice(request):
         "discount_amount": CommonHelper.amount_format(invoice_data.discount_amount),
         "discount_value": CommonHelper.amount_format(invoice_data.discount_value),
         "round_off": CommonHelper.amount_format(invoice_data.round_off),
-        "invoice_total_in_words": num2words(invoice_data.invoice_total, lang='en_IN').title(),
+        "invoice_total_in_words": num2words(invoice_data.invoice_total, lang='en_IN').title() + " Rupees Only.",
 
         "patient_name": invoice_data.patient.patient_name() if invoice_data.patient else "",
         "patient_mobile": invoice_data.patient.user.mobile if invoice_data.patient else "",
