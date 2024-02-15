@@ -133,6 +133,10 @@ INVOICE_ITEMS = "invoice_items"
 SUGGESTIONS = "suggestions"
 COMMENT = "comment"
 
+COMPANY_EMAIL = "digitalayurved@gmail.com"
+COMPANY_MOBILE = "91 96693 26441"
+COMPANY_WEBSITE = "https://digitalayurved.in"
+
 # date format
 DJANGO_DATE_FORMAT = '%Y-%m-%d'
 DATE_FORMAT_DDMMYYYY = '%d/%m/%Y'

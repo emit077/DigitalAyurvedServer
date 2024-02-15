@@ -36,11 +36,9 @@
             padding: 10px 7px;
         }
 
-
-
-
-
-
+        #item-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -66,98 +64,89 @@
             <table style="width: 100%">
                 <tr>
                     <td style="width: 30%"><p>Invoice No. :</p></td>
-                    <td>{{ data.invoice_number }}</td>
+                    <td>{{ data.invoice_id }}</td>
                 </tr>
                 <tr>
                     <td style="width: 30%"><p>Invoice Date :</p></td>
                     <td>{{ data.invoice_date }}</td>
                 </tr>
-                <tr>
-                    <td style="width: 30%"><p>Due Date :</p></td>
-                    <td>{{ data.due_date }}</td>
-                </tr>
             </table>
         </td>
         <td style="padding-left: 10px">
             To:
-
-            <p class="title-text">{{ data.buyer_name }}</p>
-            <p>{{ data.buyer_mobile }}</p>
-            <p>{{ data.buyer_email }}</p>
-            <p>{{ data.buyer_mobile }}</p>
-            <p>{{ data.buyer_address }}</p>
+            <p class="title-text">{{ data.patient_name }}</p>
+            {% if data.patient_mobile %}
+            <p>Mobile: {{ data.patient_mobile }}</p>
+            {% endif %}
+            {% if data.patient_email %}
+            <p>Email: {{ data.patient_email }}</p>
+            {% endif %}
         </td>
     </tr>
 </table>
 
 <table style="width: 100%;margin-top: 10px" id="item-table">
     <tr>
-        <th style="background-color: #d3d3d382;">Item</th>
-        <th style="text-align: right">Rate</th>
+        <th style="background-color: #d3d3d382;width:10px;text-align: center">S.No.</th>
+        <th style="background-color: #d3d3d382;">Drug</th>
         <th style="text-align: right">Qty</th>
-        <th style="text-align: right">Subtotal</th>
+        <th style="text-align: right">MRP</th>
+        <th style="text-align: right">total</th>
     </tr>
+    <tbody>
+    {% for item in data.invoice_items %}
     <tr>
-        <td>{{ data.item_name }}</td>
-        <td style="text-align: right">{{ data.qty }}</td>
-        <td style="text-align: right">{{ data.rate }}</td>
-        <td style="text-align: right">{{ data.subtotal }}</td>
+        <td style="width:10px;text-align: center">{{ forloop.counter }}</td>
+        <td>{{ item.drug.drug_name }}</td>
+        <td style="text-align: right">{{ item.quantity }}</td>
+        <td style="text-align: right">{{ item.mrp }}</td>
+        <td style="text-align: right">{{ item.subtotal }}</td>
     </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="2" rowspan="4" style="background-color:#fffff; vertical-align:top;">
+            <p>Invoice Total In words:</p>
+            <p><b>{{ data.invoice_total_in_words }}</b></p>
+        </td>
+        <td colspan="2" style="text-align: right">Subtotal</td>
+        <td style="text-align: right">{{ data.item_total }}</td>
+    </tr>
+
+    {% if data.discount_amount != "0.00" %}
+    <tr>
+        <td colspan="2" style="text-align: right">Discount({{ data.discount_value }}%)</td>
+        <td style="text-align: right"><small>(-)</small> {{ data.discount_amount }}</td>
+    </tr>
+    {% endif %}
+    {% if data.round_off != "0.00" %}
+    <tr>
+        <td colspan="2" style="text-align: right">Round off</td>
+        <td style="text-align: right"> {{ data.round_off }}</td>
+    </tr>
+    {% endif %}
+    <tr style=" border-bottom:none !important;">
+        <td colspan="2" style="text-align: right;font-weight:bold">Invoice Total</td>
+        <td style="text-align: right; font-weight:bold"> {{ data.invoice_total }}</td>
+    </tr>
+    </tbody>
 </table>
-<div>
-    <div style="width: 49%; display: inline-block; margin-top: 15px; vertical-align: top">
-        <p>Invoice Total In words:</p>
-        <p><b>{{ data.amount_in_words }}</b></p>
-        </tr>
-    </div>
-    <div style="width: 50%; display: inline-block; margin-top: 15px">
-        <table id="summary-table" style="width: 100%;">
-            <tr>
-                <th colspan="2">Invoice Summary</th>
-            </tr>
-            <tr>
-                <td>Subtotal</td>
-                <td style="text-align: right">{{ data.rate }}</td>
-            </tr>
-            {% if data.discount_amount>0 %}
-            <tr>
-                <td>Discount</td>
-                <td style="text-align: right"><small>(-)</small> {{ data.discount_amount }}</td>
-            </tr>
-            {% endif %}
-            <tr style="background-color: #c9c9c9 !important;">
-                <td><b>Total</b></td>
-                <td style="text-align: right"><b>₹{{ data.item_total }}</b></td>
-            </tr>
-            <tr style="background-color: #c9c9c9 !important;">
-                <td><b>Round off</b></td>
-                <td style="text-align: right"><b>₹{{ data.round_off_amt }}</b></td>
-            </tr>
-            <tr style="background-color: #c9c9c9 !important;">
-                <td><b>Invoice Total</b></td>
-                <td style="text-align: right"><b>₹{{ data.invoice_total }}</b></td>
-            </tr>
-        </table>
-    </div>
-</div>
-<hr>
-<div>
+<div style="padding-top:10px">
     Terms and conditions:
-<!--    <ul style="margin-top: 3px">-->
-<!--        <li>The plan hours will not be valid after the plan expiry date.</li>-->
-<!--        <li>In case tuition will be discontinued from the parents or the student (whatever the reason is)fee will not be-->
-<!--            refunded.-->
-<!--        </li>-->
-<!--        <li>In case of payment by cheque the requested services will be provided by the company only on the realization-->
-<!--            of the-->
-<!--            cheque. If the cheque bounces/ fails to be realized if the company is required to present an alternate-->
-<!--            cheque for-->
-<!--            any reason any banking charges incurred by the company in this regard are recoverable by the company from-->
-<!--            the issue-->
-<!--            of such cheque.-->
-<!--        </li>-->
-<!--        <li>If parents exceed the due date of the instalment the classes will be discontinued immediately.</li>-->
-<!--    </ul>-->
+    <!--    <ul style="margin-top: 3px">-->
+    <!--        <li>The plan hours will not be valid after the plan expiry date.</li>-->
+    <!--        <li>In case tuition will be discontinued from the parents or the student (whatever the reason is)fee will not be-->
+    <!--            refunded.-->
+    <!--        </li>-->
+    <!--        <li>In case of payment by cheque the requested services will be provided by the company only on the realization-->
+    <!--            of the-->
+    <!--            cheque. If the cheque bounces/ fails to be realized if the company is required to present an alternate-->
+    <!--            cheque for-->
+    <!--            any reason any banking charges incurred by the company in this regard are recoverable by the company from-->
+    <!--            the issue-->
+    <!--            of such cheque.-->
+    <!--        </li>-->
+    <!--        <li>If parents exceed the due date of the instalment the classes will be discontinued immediately.</li>-->
+    <!--    </ul>-->
 
 </div>
 

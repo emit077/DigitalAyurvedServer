@@ -6,6 +6,7 @@ from django.db import models
 import choices
 import keys
 from drugs.models import DrugData
+from helper.views import CommonHelper
 from master.models import MasterVendorData
 from patient.models import PatientsData
 
@@ -74,7 +75,7 @@ class InvoiceData(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.invoice_id:
-            self.invoice_id = "%s-%s" % ("DA", datetime.today().strftime('%s'))
+            self.invoice_id = "%s%s" % ("DA", datetime.today().strftime('%s'))
         return super().save(*args, **kwargs)
 
 
@@ -92,5 +93,6 @@ class InvoiceDetailsData(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    @property
     def subtotal(self, *args, **kwargs):
-        return round(float(self.quantity) * float(self.mrp), 2)
+        return CommonHelper.amount_format((round(float(self.quantity) * float(self.mrp), 2)))

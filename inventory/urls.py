@@ -11,4 +11,5 @@ urlpatterns = [
     re_path('^create-invoice/$', apis.create_invoice),
     re_path('^list-invoice/$', apis.list_invoice),
     re_path('^get-invoice-details/$', apis.get_invoice_details),
+    re_path('^get-invoice/$', apis.get_invoice),
 ]

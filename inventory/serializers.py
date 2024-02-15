@@ -102,7 +102,6 @@ class InvoiceDetailsDataSerializer(serializers.ModelSerializer):
     drug_name = serializers.CharField(source="drug.drug_name")
     drug_table_id = serializers.CharField(source="drug.id")
     order_items_table_id = serializers.CharField(source="order_items.id")
-    subtotal = serializers.SerializerMethodField()
 
     class Meta:
         model = InvoiceDetailsData
@@ -119,5 +118,4 @@ class InvoiceDetailsDataSerializer(serializers.ModelSerializer):
             "subtotal"
         ]
 
-    def get_subtotal(self, obj):
-        return obj.subtotal()
+
