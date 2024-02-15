@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q, Sum
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -79,6 +79,10 @@ def delete_drug(request):
 def list_drug(request):
     search_query = request.GET.get(keys.SEARCH_QUERY, None)
     queryset = DrugData.objects.all().order_by('-id')
+
+    queryset = queryset.annotate(
+        available_qty=Sum('purchase_drug__available_qty', filter=Q(purchase_drug__available_qty__gt=0))).order_by(
+        'available_qty')
 
     if search_query:
         queryset = queryset.filter(

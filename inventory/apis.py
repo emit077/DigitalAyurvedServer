@@ -14,7 +14,7 @@ import messages
 from helper.views import CustomDjangoDecorators, CommonHelper, CalculationHelper
 from master.models import MasterVendorData
 from patient.models import PatientsData
-from .models import DrugData, OrderData, OrderDetailsData, InvoiceDetailsData, InvoiceData
+from inventory.models import DrugData, OrderData, OrderDetailsData, InvoiceDetailsData, InvoiceData
 from .serializers import OrderDataSerializer, InvoiceDataSerializer, InvoiceDetailsDataSerializer, \
     OrderDetailsAutocompleteSerializer
 from .views import update_available_item

@@ -57,7 +57,8 @@ class MasterReferenceDataAdmin(admin.ModelAdmin):
 class MasterVendorDataAdmin(admin.ModelAdmin):
     list_display = (
         'id',
-        'reference',
+        'vendor_name',
+        'contact_number',
     )
     search_fields = (
         'id',
