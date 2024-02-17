@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 from .models import MasterDoseData, MasterInstructionData, MasterFrequencyData, MasterBrandData, MasterPackagingData, \
-    MasterReferenceData, MasterVendorData
+    MasterReferenceData, MasterVendorData, MasterFormulationData
 
 
 @admin.register(MasterDoseData)
@@ -64,4 +64,16 @@ class MasterVendorDataAdmin(admin.ModelAdmin):
         'id',
         'vendor_name',
         'contact_number',
+    )
+
+
+@admin.register(MasterFormulationData)
+class MasterFormulationDataAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'formulation_type'
+    )
+    search_fields = (
+        'id',
+        'formulation_type'
     )

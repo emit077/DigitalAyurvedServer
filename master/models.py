@@ -4,11 +4,15 @@ from django.db import models
 class MasterDoseData(models.Model):
     dose = models.CharField(max_length=255, null=True)
 
+    def __str__(self):
+        return "%s|%s" % (self.id, self.dose)
 
 
 class MasterFrequencyData(models.Model):
     frequency = models.CharField(max_length=255, null=True)
 
+    def __str__(self):
+        return "%s|%s" % (self.id, self.frequency)
 
 
 class MasterInstructionData(models.Model):
@@ -19,11 +23,16 @@ class MasterInstructionData(models.Model):
 class MasterBrandData(models.Model):
     brand_name = models.CharField(max_length=255, null=True)
 
+    def __str__(self):
+        return "%s|%s" % (self.id, self.brand_name)
+
 
 
 class MasterPackagingData(models.Model):
     packaging_type = models.CharField(max_length=255, null=True)
 
+    def __str__(self):
+        return "%s|%s" % (self.id, self.packaging_type)
 
 
 class MasterReferenceData(models.Model):
@@ -42,3 +51,10 @@ class MasterVendorData(models.Model):
 
     def __str__(self):
         return "%s|%s" % (self.vendor_name, self.contact_number)
+
+
+class MasterFormulationData(models.Model):
+    formulation_type = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return "%s|%s" % (self.id, self.formulation_type)
