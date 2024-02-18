@@ -1,9 +1,11 @@
 import json
 import os
+from datetime import datetime, timedelta
 
 import pdfkit
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q, Sum, FloatField, F
+from django.db.models.functions import Coalesce
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.utils import timezone
@@ -14,15 +16,81 @@ from rest_framework.response import Response
 
 import keys
 import messages
+from drugs.serializers import DrugDataSerializer, BestSellerDrugSerializer
 from helper.views import CustomDjangoDecorators, CommonHelper, CalculationHelper
 from inventory.models import DrugData, OrderData, OrderDetailsData, InvoiceDetailsData, InvoiceData
 from master.models import MasterVendorData
-from patient.models import PatientsData
+from patient.models import PatientsData, TreatmentRecord
 from .serializers import OrderDataSerializer, InvoiceDataSerializer, InvoiceDetailsDataSerializer, \
     OrderDetailsAutocompleteSerializer
 from .views import update_available_item
 
 Users = get_user_model()
+
+
+@api_view(['GET'])
+@CustomDjangoDecorators.validate_access_token
+def dashboard_overview(request):
+    end_date = datetime.today()
+    start_date = end_date - timedelta(days=30)
+
+    today_sales = InvoiceData.objects.filter(invoice_date=datetime.today()).aggregate(Sum('invoice_total'))[
+                      "invoice_total__sum"] or 0
+
+    monthly_sales = \
+        InvoiceData.objects.filter(invoice_date__range=[start_date, end_date]).aggregate(Sum('invoice_total'))[
+            "invoice_total__sum"] or 0
+
+    today_patient = TreatmentRecord.objects.filter(created=datetime.today()).count()
+    monthly_patient = TreatmentRecord.objects.filter(created__range=[start_date, end_date]).count()
+
+    queryset = DrugData.objects.all().annotate(
+        quantity=Coalesce(Sum('invoice_drug__quantity'), 0, output_field=FloatField()))
+
+    queryset = queryset.annotate(
+        amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price")), 0,
+                        output_field=FloatField()))
+
+    best_sellers = BestSellerDrugSerializer(queryset.order_by("-quantity")[:5], many=True).data
+
+    response = {
+        keys.SUCCESS: True,
+        keys.MESSAGE: messages.SUCCESS,
+        keys.TODAY_SALES: today_sales,
+        keys.MONTHLY_SALES: monthly_sales,
+        keys.TODAY_PATIENT: today_patient,
+        keys.MONTHLY_PATIENT: monthly_patient,
+        keys.BEST_SELLERS: best_sellers,
+    }
+    return Response(response, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@CustomDjangoDecorators.validate_access_token
+def inventory_overview(request):
+    queryset = DrugData.objects.all().order_by('-id')
+
+    queryset = queryset.annotate(
+        available_qty=Coalesce(Sum('purchase_drug__available_qty'), 0, output_field=FloatField()))
+
+    near_stock_out = DrugDataSerializer(queryset.filter(available_qty__gt=0).order_by('available_qty')[:5],
+                                        many=True).data
+    stock_out = DrugDataSerializer(queryset.filter(available_qty=0)[:5], many=True).data
+
+    near_expiry = OrderDetailsAutocompleteSerializer(
+        OrderDetailsData.objects.filter(expiry_date__gt=datetime.today()).order_by("expiry_date")[:5], many=True).data
+    expired = OrderDetailsAutocompleteSerializer(
+        OrderDetailsData.objects.filter(expiry_date__lte=datetime.today()).order_by("-expiry_date")[:5], many=True).data
+
+    response = {
+        keys.SUCCESS: True,
+        keys.MESSAGE: messages.SUCCESS,
+        keys.NEAR_STOCK_OUT: near_stock_out,
+        keys.STOCK_OUT: stock_out,
+        keys.NEAR_EXPIRY: near_expiry,
+        keys.EXPIRED: expired,
+    }
+    return Response(response, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

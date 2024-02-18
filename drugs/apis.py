@@ -78,11 +78,17 @@ def delete_drug(request):
 @CustomDjangoDecorators.validate_access_token
 def list_drug(request):
     search_query = request.GET.get(keys.SEARCH_QUERY, None)
+    type = request.GET.get(keys.TYPE, None)
+
     queryset = DrugData.objects.all().order_by('-id')
 
     queryset = queryset.annotate(
-        available_qty=Sum('purchase_drug__available_qty', filter=Q(purchase_drug__available_qty__gt=0))).order_by(
-        'available_qty')
+        available_qty=Sum('purchase_drug__available_qty', filter=Q(purchase_drug__available_qty__gt=0)))
+
+    if type == keys.STOCK_OUT:
+        queryset = queryset.filter(available_qty=0)
+    elif type == keys.NEAR_STOCK_OUT:
+        queryset = queryset.filter(available_qty__gt=0).order_by('available_qty')
 
     if search_query:
         queryset = queryset.filter(
