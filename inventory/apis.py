@@ -44,7 +44,9 @@ def dashboard_overview(request):
     today_patient = TreatmentRecord.objects.filter(created=datetime.today()).count()
     monthly_patient = TreatmentRecord.objects.filter(created__range=[start_date, end_date]).count()
 
-    queryset = DrugData.objects.all().annotate(
+    queryset = DrugData.objects.all()
+
+    queryset = queryset.annotate(
         quantity=Coalesce(Sum('invoice_drug__quantity'), 0, output_field=FloatField()))
 
     queryset = queryset.annotate(
