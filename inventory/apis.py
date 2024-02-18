@@ -16,7 +16,7 @@ from rest_framework.response import Response
 
 import keys
 import messages
-from drugs.serializers import DrugDataSerializer, BestSellerDrugSerializer
+from drugs.serializers import DrugDataSerializer
 from helper.views import CustomDjangoDecorators, CommonHelper, CalculationHelper
 from inventory.models import DrugData, OrderData, OrderDetailsData, InvoiceDetailsData, InvoiceData
 from master.models import MasterVendorData
@@ -47,11 +47,11 @@ def dashboard_overview(request):
     queryset = DrugData.objects.all().annotate(
         quantity=Coalesce(Sum('invoice_drug__quantity'), 0, output_field=FloatField()))
 
-    # queryset = queryset.annotate(
-    #     amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price")), 0,
-    #                     output_field=FloatField()))
+    queryset = queryset.annotate(
+        amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price")), 0,
+                        output_field=FloatField()))
 
-    best_sellers = BestSellerDrugSerializer(queryset.order_by("-quantity")[:5], many=True).data
+    best_sellers = queryset.order_by("-quantity")[:5].values("drug_name", "amount", "quantity")
 
     response = {
         keys.SUCCESS: True,
