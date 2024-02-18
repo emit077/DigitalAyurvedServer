@@ -44,16 +44,16 @@ def dashboard_overview(request):
     today_patient = TreatmentRecord.objects.filter(created=datetime.today()).count()
     monthly_patient = TreatmentRecord.objects.filter(created__range=[start_date, end_date]).count()
 
-    queryset = DrugData.objects.all()
-
-    queryset = queryset.annotate(
-        quantity=Coalesce(Sum('invoice_drug__quantity'), 0, output_field=FloatField()))
-
+    # queryset = DrugData.objects.all()
+    #
     # queryset = queryset.annotate(
-    #     amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price")), 0,
-    #                     output_field=FloatField()))
-
-    best_sellers = queryset.order_by("-quantity")[:5].values("drug_name", "quantity")
+    #     quantity=Coalesce(Sum('invoice_drug__quantity'), 0, output_field=FloatField()))
+    #
+    # # queryset = queryset.annotate(
+    # #     amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price")), 0,
+    # #                     output_field=FloatField()))
+    #
+    # best_sellers = queryset.order_by("-quantity")[:5].values("drug_name", "quantity")
 
     response = {
         keys.SUCCESS: True,
@@ -62,7 +62,7 @@ def dashboard_overview(request):
         keys.MONTHLY_SALES: monthly_sales,
         keys.TODAY_PATIENT: today_patient,
         keys.MONTHLY_PATIENT: monthly_patient,
-        keys.BEST_SELLERS: best_sellers,
+        # keys.BEST_SELLERS: best_sellers,
     }
     return Response(response, status=status.HTTP_200_OK)
 
