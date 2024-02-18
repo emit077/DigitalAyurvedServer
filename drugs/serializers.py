@@ -34,7 +34,7 @@ class BestSellerDrugSerializer(serializers.ModelSerializer):
     drug_table_id = serializers.CharField(source="id")
     brand = serializers.CharField(source="brand.brand_name")
     quantity = serializers.SerializerMethodField()
-    amount = serializers.SerializerMethodField()
+    # amount = serializers.SerializerMethodField()
 
     class Meta:
         model = DrugData
@@ -49,5 +49,5 @@ class BestSellerDrugSerializer(serializers.ModelSerializer):
 
     def get_quantity(self, obj):
         return obj.quantity if obj.quantity else "0"
-    def get_amount(self, obj):
-        return obj.amount if obj.amount else "0"
+    # def get_amount(self, obj):
+    #     return obj.amount if obj.amount else "0"

@@ -47,9 +47,9 @@ def dashboard_overview(request):
     queryset = DrugData.objects.all().annotate(
         quantity=Coalesce(Sum('invoice_drug__quantity'), 0, output_field=FloatField()))
 
-    queryset = queryset.annotate(
-        amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price")), 0,
-                        output_field=FloatField()))
+    # queryset = queryset.annotate(
+    #     amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price")), 0,
+    #                     output_field=FloatField()))
 
     best_sellers = BestSellerDrugSerializer(queryset.order_by("-quantity")[:5], many=True).data
 
