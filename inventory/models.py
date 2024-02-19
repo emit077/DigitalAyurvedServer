@@ -83,7 +83,7 @@ class InvoiceDetailsData(models.Model):
     drug = models.ForeignKey(to=DrugData, on_delete=models.CASCADE, related_name='invoice_drug')
     order_items = models.ForeignKey(to=OrderDetailsData, on_delete=models.CASCADE, related_name='order_items')
     invoice_data = models.ForeignKey(to=InvoiceData, on_delete=models.CASCADE, related_name='invoice_data')
-    quantity = models.CharField(max_length=255)
+    quantity = models.FloatField(default=0)
     expiry_date = models.DateField(null=True, blank=True)
     mrp = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00),
                               help_text="MRP")
