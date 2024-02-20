@@ -35,6 +35,7 @@ class MasterBrandDataAdmin(admin.ModelAdmin):
         'id',
         'brand_name',
     )
+    search_fields = ("brand_name",)
 
 
 @admin.register(MasterPackagingData)

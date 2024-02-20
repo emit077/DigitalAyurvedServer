@@ -1,5 +1,7 @@
 from django.db import models
 
+import choices
+
 
 class MasterDoseData(models.Model):
     dose = models.CharField(max_length=255, null=True)
@@ -55,6 +57,7 @@ class MasterVendorData(models.Model):
 
 class MasterFormulationData(models.Model):
     formulation_type = models.CharField(max_length=255, null=True)
+    unit_type = models.CharField(max_length=255, choices=choices.DRUG_UNIT, null=True, blank=True)
 
     def __str__(self):
         return "%s|%s" % (self.id, self.formulation_type)

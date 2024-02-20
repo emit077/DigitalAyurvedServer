@@ -7,6 +7,7 @@ from rest_framework.response import Response
 import keys
 import messages
 from helper.views import CustomDjangoDecorators, CommonHelper
+from master.models import MasterBrandData, MasterFormulationData
 from .models import DrugData
 from .serializers import DrugDataSerializer
 
@@ -19,10 +20,8 @@ def add_drugs(request):
     drug_table_id = request.data.get(keys.DRUG_TABLE_ID, None)
     drug_name = request.data.get(keys.DRUG_NAME, None)
     formula = request.data.get(keys.FORMULA, None)
-    brand = request.data.get(keys.BRAND, None)
-    drug_unit = request.data.get(keys.DRUG_UNIT, None)
-    anupaan = request.data.get(keys.ANUPAAN, None)
-    formulation = request.data.get(keys.FORMULATION, None)
+    brand_table_id = request.data.get(keys.BRAND_TABLE_ID, None)
+    formulation_table_id = request.data.get(keys.FORMULATION_TABLE_ID, None)
 
     if drug_table_id:
         try:
@@ -38,10 +37,8 @@ def add_drugs(request):
 
     drug_instance.drug_name = drug_name
     drug_instance.formula = formula
-    drug_instance.brand = brand
-    drug_instance.drug_unit = drug_unit
-    drug_instance.anupaan = anupaan
-    drug_instance.formulation = formulation
+    drug_instance.brand = MasterBrandData.objects.get(id=brand_table_id)
+    drug_instance.formulation = MasterFormulationData.objects.get(id=formulation_table_id)
     drug_instance.save()
 
     response = {
@@ -127,9 +124,9 @@ def drug_details(request):
         keys.DRUG_TABLE_ID: drug_instance.id,
         keys.DRUG_NAME: drug_instance.drug_name,
         keys.FORMULA: drug_instance.formula,
-        keys.BRAND: drug_instance.brand,
-        keys.DRUG_UNIT: drug_instance.drug_unit,
-        keys.ANUPAAN: drug_instance.anupaan,
-        keys.FORMULATION: drug_instance.formulation,
+        keys.BRAND_NAME: drug_instance.brand.brand_name,
+        keys.BRAND_TABLE_ID: drug_instance.brand.id,
+        keys.FORMULATION_TABLE_ID: drug_instance.formulation_type.id if drug_instance.formulation_type else "",
+        keys.FORMULATION: drug_instance.formulation_type.formulation_type if drug_instance.formulation_type else "",
     }
     return Response(response, status=status.HTTP_200_OK)

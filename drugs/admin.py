@@ -9,14 +9,13 @@ class DrugDataAdmin(admin.ModelAdmin):
         'id',
         'drug_name',
         'formula',
-        'drug_unit',
-        'anupaan',
-        'formulation',
-        'mrp',
+        'formulation_type',
         'created',
         'modified',
     )
     search_fields = (
         'drug_name',
         'formula',
+        'formulation_type',
     )
+    autocomplete_fields = ['brand', 'formulation_type']

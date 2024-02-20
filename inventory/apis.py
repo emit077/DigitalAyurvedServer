@@ -32,7 +32,7 @@ Users = get_user_model()
 @CustomDjangoDecorators.validate_access_token
 def dashboard_overview(request):
     end_date = datetime.today()
-    start_date = end_date - timedelta(days=30)
+    start_date = end_date - timedelta(days=1    )
 
     today_sales = InvoiceData.objects.filter(invoice_date=datetime.today()).aggregate(Sum('invoice_total'))[
                       "invoice_total__sum"] or 0
@@ -52,7 +52,21 @@ def dashboard_overview(request):
         amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price")), 0,
                         output_field=FloatField()))
 
-    best_sellers = queryset.order_by("-quantity")[:5].values("drug_name","amount", "quantity")
+    best_sellers = queryset.order_by("-quantity")[:5].values("drug_name", "amount", "quantity")
+
+    drug_queryset = DrugData.objects.all()
+
+    drug_queryset = drug_queryset.annotate(
+        quantity=Coalesce(Sum('invoice_drug__quantity',
+                              filter=Q(invoice_drug__invoice_data__invoice_date__range=[start_date, end_date])), 0,
+                          output_field=FloatField()))
+
+    drug_queryset = drug_queryset.annotate(
+        amount=Coalesce(Sum(F('invoice_drug__quantity') * F("invoice_drug__selling_price"),
+                            filter=Q(invoice_drug__invoice_data__invoice_date__range=[start_date, end_date])), 0,
+                        output_field=FloatField()))
+
+    monthly_best_sellers = drug_queryset.order_by("-quantity")[:5].values("drug_name", "amount", "quantity")
 
     response = {
         keys.SUCCESS: True,
@@ -61,6 +75,7 @@ def dashboard_overview(request):
         keys.MONTHLY_SALES: monthly_sales,
         keys.TODAY_PATIENT: today_patient,
         keys.MONTHLY_PATIENT: monthly_patient,
+        keys.MONTHLY_BEST_SELLERS: monthly_best_sellers,
         keys.BEST_SELLERS: best_sellers,
     }
     return Response(response, status=status.HTTP_200_OK)
@@ -153,6 +168,7 @@ def list_purchase_order(request):
     if search_query:
         queryset = queryset.filter(
             Q(vendor__vendor_name__icontains=search_query) |
+            Q(order_id__icontains=search_query) |
             Q(vendor__contact_number__icontains=search_query))
     # pagination
     queryset, total_page_count = CommonHelper.do_pagination(queryset, request)

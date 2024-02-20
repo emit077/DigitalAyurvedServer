@@ -19,10 +19,7 @@ class DrugDataSerializer(serializers.ModelSerializer):
             "drug_name",
             "brand",
             "formula",
-            "mrp",
-            "drug_unit",
-            "anupaan",
-            "formulation",
+             "formulation_type",
             "available_qty",
         ]
 

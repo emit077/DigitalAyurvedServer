@@ -1,10 +1,7 @@
-from decimal import Decimal
-
 from django.contrib.auth import get_user_model
 from django.db import models
 
-import choices
-from master.models import MasterBrandData
+from master.models import MasterBrandData, MasterFormulationData
 
 Users = get_user_model()
 
@@ -13,10 +10,8 @@ class DrugData(models.Model):
     drug_name = models.CharField(max_length=255)
     formula = models.CharField(max_length=255, null=True, blank=True)
     brand = models.ForeignKey(to=MasterBrandData, on_delete=models.CASCADE, related_name='drug_brand')
-    drug_unit = models.CharField(max_length=255, choices=choices.DRUG_UNIT, null=True, blank=True)
-    anupaan = models.CharField(max_length=150, null=True, blank=True)
-    formulation = models.CharField(max_length=150, null=True, blank=True)
-    mrp = models.DecimalField(decimal_places=2, max_digits=11, default=Decimal(0.00))
+    formulation_type = models.ForeignKey(to=MasterFormulationData, on_delete=models.CASCADE, related_name='drug_formulation',
+                                    null=True, blank=True)
     # auto
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
